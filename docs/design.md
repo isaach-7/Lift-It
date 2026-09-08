@@ -16,7 +16,33 @@ LiftIt is a mobile-first workout tracker intended for real use during gym sessio
 8. Completing the workout persists its completion time and makes its results available to progress views.
 9. The progress view charts the maximum weight recorded for an exercise in each completed session.
 
-## Architecture
+## Account foundation milestone
+
+The first milestone uses one email-link form for registration and sign-in. A
+successful request asks the user to check their inbox; it does not mean they are
+signed in. Resending is an explicit action. Email and errors remain visible after
+a failed request. Passwords and social providers are deferred.
+
+Routes are `/login`, `/auth/callback`, and the protected home page `/`. The
+Supabase browser client uses the implicit flow with the default confirmation-link
+email template. Supabase consumes the callback tokens and persists the session.
+The app waits for initialization before displaying private content, handles
+invalid or expired callbacks, and replaces the callback URL after completion.
+Sign-out applies to the current browser session. A failed sign-out is visible
+and does not pretend the user has signed out.
+
+The first migration creates only `profiles(id, created_at)`. The ID references
+`auth.users` with cascading deletion. A database trigger creates the profile;
+authenticated clients have SELECT access to their own row through RLS and no
+write access. The home page reads the email from the auth session and does not
+make an unnecessary profile request. Workout tables follow in later milestones.
+
+Local development uses `http://localhost:5173` and an exact allowed redirect of
+`http://localhost:5173/auth/callback`. A hosted development Supabase project is
+configured separately; public deployment and production email delivery remain
+outside this milestone.
+
+## Application architecture
 
 The frontend is a React single-page application written in TypeScript and built by Vite. Vercel serves the static build and rewrites application routes to `index.html`. React owns application state and interaction. CSS owns responsive layout.
 
