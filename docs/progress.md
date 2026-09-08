@@ -7,3 +7,5 @@
 - Reviewed and adopted the project plan and browser-aware frontend guide as repository constraints.
 - Documented the v1 journey, architecture, scope boundaries, data model direction, and verification approach before application code was created.
 - Accepted React, TypeScript, Vite, Vercel, and Supabase as the initial stack in ADR 0001.
+- Created the Vite, React, and TypeScript application foundation with routing, a lazy Supabase client boundary, mobile-first CSS, test tooling, formatting, linting, and GitHub Actions CI.
+- Verified the starter with Oxlint, Prettier, Vitest, strict TypeScript compilation, and a Vite production build.

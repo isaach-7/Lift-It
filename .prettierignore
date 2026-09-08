@@ -1,0 +1,6 @@
+dist/
+coverage/
+node_modules/
+package-lock.json
+Browser-Aware Web Design for LiftIt.md
+Overall plan, subject to change.md
