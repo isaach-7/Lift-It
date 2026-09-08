@@ -2,7 +2,9 @@
 
 LiftIt is a mobile-first workout tracker with simple, explainable weight progression. The workout tracker is the complete v1 focus; calorie tracking, social features, a native application, and an AI assistant are deferred.
 
-The repository currently contains a verified development foundation. Product features and the Supabase database have not been implemented yet.
+The repository includes email-link sign-in, session restoration, a private home page, and sign-out. The initial profile migration is ready to apply to a dedicated Supabase project. Workout features are next.
+
+Follow [account setup and verification](docs/account-setup.md) to connect Supabase, apply the migration, and test real email links.
 
 ## Technology
 
@@ -34,7 +36,7 @@ npm run dev
 
 Vite prints the local URL, normally `http://localhost:5173`. Changes under `src/` update in the browser during development.
 
-The starter page runs without Supabase credentials. When database work begins, copy `.env.example` to `.env.local` and add the public values from the Supabase project settings:
+Without Supabase configuration, the app shows setup instructions. Copy `.env.example` to `.env.local` and add the public values from the Supabase project settings:
 
 ```bash
 cp .env.example .env.local
