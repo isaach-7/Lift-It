@@ -42,7 +42,27 @@ Local development uses `http://localhost:5173` and an exact allowed redirect of
 configured separately; public deployment and production email delivery remain
 outside this milestone.
 
-## Application architecture
+## Saved workout milestone
+
+The private home page lists the user's saved workout templates, newest first.
+This first template-builder slice supports creating and renaming templates only.
+Exercise selection follows with a small built-in library, as selected by the user.
+There is no Start workout button until live sessions exist.
+
+A template has a UUID, owner ID, name, and creation time. Names are trimmed,
+required, and limited to 120 characters. Duplicate names are allowed. The database
+enforces ownership through SELECT, INSERT, and UPDATE RLS policies. Clients have
+no DELETE privilege in this slice. An owner index supports listing templates.
+
+The list has distinct loading, empty, loaded, and error states with a retry action.
+Create and rename forms retain their text after a failed write and only display
+success after Supabase confirms the stored row. Each create draft keeps one UUID
+across retries; saving uses an upsert on that ID so retrying a response lost after
+commit cannot create a duplicate. Inputs are disabled only while their form saves.
+The list is updated from the returned row rather than an extra refetch. Account
+changes remount the workout area so one user's data is never shown to another.
+
+## Application structure
 
 The frontend is a React single-page application written in TypeScript and built by Vite. Vercel serves the static build and rewrites application routes to `index.html`. React owns application state and interaction. CSS owns responsive layout.
 
