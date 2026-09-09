@@ -30,3 +30,19 @@
   cannot silently use the wrong origin. Added a step-by-step account setup guide.
 - Hosted Supabase setup, applying the migration there, and real delivered-email
   acceptance checks remain pending the user's project configuration.
+
+## 2026-09-09: Hosted account setup
+
+- Created the free personal LiftIt organization and dedicated Ireland-region
+  project. The user set the database password and completed project creation.
+- Connected the development app using the project URL and publishable key in
+  ignored `.env.local`; no privileged key is needed or committed.
+- Applied the initial profile migration successfully to hosted Supabase.
+- Passed hosted transactional assertions for profile creation, two-user RLS
+  isolation, denied anonymous/client-write privileges, and cascading cleanup.
+  Synthetic users were rolled back after the checks.
+- Set the site URL to `http://localhost:5173` and allowed exactly
+  `http://localhost:5173/auth/callback`. Verified email authentication and new
+  sign-ups are enabled, with email confirmation required.
+- Verified the connected local app displays the sign-in form. Real email-link
+  acceptance and session refresh checks are awaiting the user's first sign-in.
