@@ -62,6 +62,37 @@ commit cannot create a duplicate. Inputs are disabled only while their form save
 The list is updated from the returned row rather than an extra refetch. Account
 changes remount the workout area so one user's data is never shown to another.
 
+## Exercise library milestone
+
+Each saved workout can open an inline exercise picker. The picker loads a curated
+system library and the user's existing template selections alongside the workout
+list, so it does not issue one request per workout. Users can search by exercise,
+equipment, or muscle, filter by broad muscle group, read short performance steps,
+and add or remove exercises. The selected list uses insertion order. Reordering
+and per-exercise progression settings follow in a later template-builder slice.
+
+The initial library covers chest, shoulders, triceps, biceps, legs, and back. Each
+exercise has a broad group, a more specific primary target, secondary targets,
+equipment type, local image path, instructions, and an added-weight capability
+for applicable bodyweight movements. Names use familiar gym terminology while
+removing accidental duplicates and making grip or machine variants explicit.
+
+System exercise definitions are readable but not writable by authenticated
+clients. Template selections contain the owner ID and reference the workout and
+exercise. Composite database constraints prevent a selection from claiming a
+different workout owner and prevent duplicate exercises in one workout. Row Level
+Security permits users to read, add, and remove only their own selections.
+
+Adding and removing is confirmed by Supabase before the interface changes. If a
+write response fails, the app reloads selections once to determine whether the
+write reached the database. Entered search and filter choices remain available,
+and an unresolved failure is shown without pretending the selection changed.
+
+Exercise images are copied into the application from the public-domain Free
+Exercise DB rather than requested from a third-party host at runtime. Cards use a
+fixed aspect ratio, lazy loading, explicit dimensions, useful alternative text,
+and a text fallback if an image cannot be displayed.
+
 ## Application structure
 
 The frontend is a React single-page application written in TypeScript and built by Vite. Vercel serves the static build and rewrites application routes to `index.html`. React owns application state and interaction. CSS owns responsive layout.
@@ -101,3 +132,50 @@ The calorie tracker, barcode scanning, social features, React Native application
 ## Verification approach
 
 Pure business rules receive unit tests, including rep-range boundary cases and warmup exclusions. Components receive interaction and state tests for important behavior. Integration tests will cover Supabase boundaries with controlled test data. The completed core journey will receive browser-level tests before release. Performance work follows measurement with browser tools and is recorded in `docs/performance.md` once meaningful screens exist.
+
+## Password and complete workout milestone (supersedes earlier account slices)
+
+Email/password registration and sign-in replace ordinary magic links. Email
+verification remains required; recovery links establish passwords for existing
+accounts without changing IDs. Recovery routes take priority over home redirects.
+Supabase owns password hashing; application code never persists passwords.
+
+Onboarding requires a preferred name and a weekly goal of 1-7 days. Height in cm
+and body weight in kg are optional. Profile and initial weight history save in
+one retry-safe transaction. Profiles remain owner-only. Existing accounts complete
+onboarding without losing templates. Profile includes measurements and theme choice.
+
+The interface supports System, Light and Dark themes with flat surfaces, restrained
+green accents, readable typography and stable mobile-first layouts. Home shows a
+personal greeting, weekly encouragement, Start/Resume, Create workout, recent
+sessions and a 12-week per-exercise chart. Attendance counts distinct completed
+local dates Monday-Sunday. Charts separate equipment configurations and use max
+weight per completed session, or reps for unweighted bodyweight exercises.
+
+Templates now contain ordered exercises and planned sets with optional targets.
+New exercises begin with one blank standard set, a 90-second rest, 6-10 rep range
+and progression disabled. Users configure increments or available weights and a
+machine label. Save is atomic. Existing templates without sets remain drafts.
+
+Starting snapshots the template, settings and sets atomically; at most one active
+session exists per account. Each logged set and its progression update commit
+atomically. Retry IDs prevent duplicate writes. Inputs stay responsive; failures
+remain visible and preserve local user/session-scoped recovery drafts. Completion
+requires a saved set and no unresolved writes. Abandoned sessions are excluded.
+Timers use timestamps. Full offline synchronization remains deferred.
+
+Progression changes strictly outside inclusive rep bounds, excludes warmups and
+includes failure sets. Lists use adjacent available weights; increments clamp at
+zero. Equipment configurations partition recommendations. Explicit overrides take
+priority, then progression, template targets and blank input. A next-set-only
+override does not replace the persistent recommendation; use-going-forward does.
+
+Machine presets follow the core flow. Manufacturer/model/stack variants require
+verified specifications and user confirmation. Custom values always remain usable.
+Six generic, original rotatable previews cover chest/shoulder press, lat pulldown,
+row, leg extension and seated leg curl. Previews load only on request and fall back
+to static imagery. They do not control or block workout persistence.
+
+Bodyweight exercises default to reps-only tracking. An explicit added-weight
+setting is copied into the session and equipment comparison key, keeping weighted
+and unweighted records separate even for the same exercise and equipment.
