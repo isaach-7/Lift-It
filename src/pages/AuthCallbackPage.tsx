@@ -14,11 +14,11 @@ export function AuthCallbackPage() {
         <p className="eyebrow">LiftIt</p>
         <h1 id="callback-title">Link unavailable</h1>
         <p className="feedback error" role="alert">
-          This sign-in link is missing, invalid, or expired. Request a new link
-          to continue.
+          This verification link is missing, invalid, or expired. Return to sign
+          in to continue.
         </p>
         <a className="text-link" href="/login">
-          Request a new link
+          Return to sign in
         </a>
       </section>
     </main>

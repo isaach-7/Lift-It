@@ -1,96 +1,79 @@
-# Account foundation: setup and verification
+# Password accounts: setup and verification
 
-## 1. Create and connect the project
+## Environment
 
-Create a dedicated LiftIt project in your Supabase account. Select your own
-organization and a nearby region. Keep its database password in your password
-manager; the frontend does not need it.
+Copy `.env.example` to `.env.local` and set the project URL and publishable key.
+Never use a service-role key in frontend environment variables. Start with
+`npm run dev` and open `http://localhost:5173`.
 
-Copy `.env.example` to `.env.local`. In the project Connect dialog or API settings,
-find the Project URL and publishable key and enter them in the matching variables.
-Do not use a service-role key or secret key. `.env.local` is ignored by Git.
+## Authentication configuration
 
-Start the frontend with `npm run dev`. Vite uses port 5173 and fails if that port
-is occupied, so email redirects cannot silently point at the wrong server.
+Enable Email and new signups. Keep Confirm email enabled. Set minimum password
+length to 12. Passwords are handled by Supabase Auth and its salted password
+hashing; they never enter LiftIt profile tables or recovery drafts.
 
-## 2. Configure email links
+Keep confirmation and recovery templates using `{{ .ConfirmationURL }}`. Ordinary
+sign-in uses email and password. Existing email-link accounts use Forgot password
+to establish a password while retaining their account ID and workouts.
 
-In Supabase Authentication, enable the Email provider and allow new sign-ups.
-Keep the default confirmation-link templates for both sign-up and magic links;
-they must contain `{{ .ConfirmationURL }}`, not only the numeric OTP token.
-
-Under Authentication URL Configuration, use:
+Local URLs:
 
 - Site URL: `http://localhost:5173`
-- Allowed redirect URL: `http://localhost:5173/auth/callback`
+- Verification redirect: `http://localhost:5173/auth/callback`
+- Recovery redirect: `http://localhost:5173/update-password`
 
-Open links on the same machine running Vite. A phone's localhost refers to the
-phone, not your computer. Public deployment and phone testing need their own
-reachable URL and explicit redirect configuration later.
+For production, use the actual HTTPS site origin and allow those two exact paths.
+Do not guess a domain or use a broad wildcard. Configure a verified SMTP sender
+before public release. Supabase's built-in sender restricts recipients to project
+organization members and has development rate limits. SMTP credentials must be
+entered securely in the Supabase dashboard, never committed to this repository.
 
-Supabase's built-in email sender is for development and restricts recipients to
-project organization members, with tight rate limits. Use your organization
-member email for the first real-link test. A second real email account may require
-another organization member or custom SMTP. Production delivery is a later step.
+Sources:
 
-Source: https://supabase.com/docs/guides/auth/auth-smtp
+- https://supabase.com/docs/guides/auth/password-security
+- https://supabase.com/docs/guides/auth/passwords
+- https://supabase.com/docs/guides/auth/auth-smtp
 
-## 3. Apply the database migration
+## Database migrations
 
-In the new project's SQL editor, run the complete contents of
-`supabase/migrations/20260908000100_create_profiles.sql` once. This is an initial
-migration for a project without an existing profiles table. A failure rolls the
-whole migration back; fix the reported error before retrying.
+Apply historical files once, in timestamp order:
 
-The migration creates a profile automatically when Supabase creates an auth
-account, including any accounts already created during setup. The browser cannot
-insert, update, or delete profiles. RLS allows a signed-in user to read only their
-own row. No frontend profile query is needed just to show the user's email.
+1. `20260908000100_create_profiles.sql`
+2. `20260909000100_create_workout_templates.sql`
+3. `20260909000200_create_exercise_library.sql`
+4. `20260909000300_complete_workout_flow.sql`
 
-Keep this migration as the versioned source of truth. If adopting the Supabase CLI
-later, mark this exact manually applied migration as applied before pushing more
-migrations; do not apply it twice.
+Check hosted status before applying. The project originally used manual SQL
+Editor migrations; reconcile these exact versions with CLI migration history
+before adopting `supabase db push`. Never replay an already applied migration.
+Migration 003 preserves account IDs and existing templates and adds transactional
+profile, template, session, set and progression operations. Existing users complete
+onboarding; name-only templates remain editable drafts.
 
-After the profile migration, apply
-`supabase/migrations/20260909000100_create_workout_templates.sql` once to enable
-saved workout names. The home page can then create and rename templates.
+## Verification
 
-## 4. Database isolation check
+`npm run check` runs lint, formatting, 76 unit/component tests, four SQL suites and
+a production build. The SQL harness uses PGlite with auth roles and Supabase-like
+default table grants. Also run the SQL files under `supabase/tests/` against the
+hosted project as postgres. Each creates synthetic records in a transaction and
+ends in ROLLBACK; none sends an email. On a failed SQL test, roll back before retry.
 
-Run `supabase/tests/profiles.sql` in the SQL editor as postgres. It creates two
-synthetic auth users inside a transaction, checks automatic profiles, tests each
-user's visibility under the authenticated role, checks denied client write and
-anonymous privileges, and checks cascading account deletion. It ends in ROLLBACK,
-so no synthetic accounts remain after success. If it errors, roll back the failed
-transaction before continuing. No email is sent by this SQL test.
+Complete these real browser checks before release:
 
-Also run `supabase/tests/workout_templates.sql` after the template migration to
-verify create/upsert/rename behavior, name validation, and cross-user isolation.
-This test also rolls back its synthetic accounts and templates.
+1. Register an allowed email, verify it and finish onboarding with optional
+   measurements omitted. Confirm failed onboarding retains input.
+2. Sign out and sign in with the password; refresh to verify session restoration.
+3. Use Forgot password on an existing email-link account, follow the recovery
+   link, set a password and confirm the original workouts remain.
+4. Check consumed/expired links, resend, incorrect passwords, rate limits and
+   connection failures. Recovery must stay on the password-update route.
+5. Create an ordered workout with sets; start, save a set, refresh, resume and
+   finish. Check rest timers, save retry and unfinished-set confirmation.
+6. Confirm weekly attendance and exercise history after completion. Abandon a
+   separate session and confirm it does not appear in completed summaries.
+7. Inspect both themes at 375px and desktop, keyboard controls, long names,
+   unavailable images, chart errors and optional preview failure.
 
-A successful run has no assertion errors. This tests database roles and policies;
-it does not test the hosted Auth email service.
-
-## 5. Real browser acceptance check
-
-1. Visit `/` while signed out. Expect the email form and no private content.
-2. Submit your permitted email. Expect a sending state, then check-inbox feedback.
-3. Open the emailed link. Expect the private home page and your email; the URL
-   should become `/` without callback tokens.
-4. Refresh. Expect a brief session-checking state, then the private page.
-5. Sign out. Expect the email form. Refresh again to confirm you remain signed out.
-6. Reopen the consumed link. Expect an unavailable-link message and a new-link
-   action. Also test an expired link after its configured expiration time.
-7. Request a new link and confirm recovery works. Respect the email rate limit.
-8. Disable the network when sending or signing out. Confirm a visible error and
-   retry path. A failed request must not show new success feedback.
-9. Check `/auth/callback` with no link parameters. Expect an unavailable-link page.
-10. Inspect at a narrow mobile width and with keyboard navigation. Labels, focus,
-    buttons, and long email addresses should remain usable.
-
-## Automated checks
-
-Run `npm run check`. UI tests use a mocked Supabase boundary to cover session
-checking/restoration, email submission and retry, auth events, callback errors,
-missing configuration, sign-out failures, and subscription cleanup. They do not
-replace the real project checks above.
+Mocked UI checks and rollback-only SQL checks do not establish email delivery or
+replace the real registration/recovery journey. See `docs/progress.md` for the
+checks actually completed and remaining release gates.

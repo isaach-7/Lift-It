@@ -2,9 +2,14 @@
 
 LiftIt is a mobile-first workout tracker with simple, explainable weight progression. The workout tracker is the complete v1 focus; calorie tracking, social features, a native application, and an AI assistant are deferred.
 
-The repository includes email-link sign-in, session restoration, sign-out, and a private home page for creating and renaming saved workout templates. Profile and workout-template migrations are applied to the development Supabase project. Exercise selection and live workout logging follow next.
+The app includes password registration and recovery, profile onboarding, light and
+dark themes, a curated 73-exercise library, workout templates with planned sets,
+resumable live sessions, weight progression, and a personal home dashboard.
+Optional equipment settings include a confirmed Matrix main-stack preset and six
+original rotatable machine previews. Unweighted bodyweight exercises track reps.
 
-Follow [account setup and verification](docs/account-setup.md) to connect Supabase, apply the migration, and test real email links.
+Follow [account setup and verification](docs/account-setup.md) for Supabase
+configuration, ordered migrations, and real authentication release checks.
 
 ## Technology
 
@@ -46,32 +51,34 @@ Never put a Supabase service-role key or another secret in a variable beginning 
 
 ## Commands
 
-| Command                | Purpose                                                |
-| ---------------------- | ------------------------------------------------------ |
-| `npm run dev`          | Start the Vite development server                      |
-| `npm run test`         | Run tests in interactive watch mode                    |
-| `npm run test:run`     | Run the test suite once                                |
-| `npm run lint`         | Check source files with Oxlint                         |
-| `npm run lint:fix`     | Apply safe automatic lint fixes                        |
-| `npm run format`       | Format supported repository files                      |
-| `npm run format:check` | Verify formatting without changing files               |
-| `npm run typecheck`    | Run strict TypeScript checks                           |
-| `npm run build`        | Type-check and create the production build in `dist/`  |
-| `npm run preview`      | Serve the production build locally                     |
-| `npm run check`        | Run linting, formatting, tests, and a production build |
+| Command                | Purpose                                                      |
+| ---------------------- | ------------------------------------------------------------ |
+| `npm run dev`          | Start the Vite development server                            |
+| `npm run test`         | Run tests in interactive watch mode                          |
+| `npm run test:db`      | Run migrations and SQL ownership/transaction tests in PGlite |
+| `npm run test:run`     | Run the test suite once                                      |
+| `npm run lint`         | Check source files with Oxlint                               |
+| `npm run lint:fix`     | Apply safe automatic lint fixes                              |
+| `npm run format`       | Format supported repository files                            |
+| `npm run format:check` | Verify formatting without changing files                     |
+| `npm run typecheck`    | Run strict TypeScript checks                                 |
+| `npm run build`        | Type-check and create the production build in `dist/`        |
+| `npm run preview`      | Serve the production build locally                           |
+| `npm run check`        | Run linting, formatting, tests, and a production build       |
 
 Run `npm run check` before every commit. GitHub Actions runs the same command for pull requests and pushes to `main`.
 
 ## Repository structure
 
 ```text
-docs/                    Product design, progress log, and architecture decisions
-public/                  Files copied directly into the production build
-src/lib/                 Service boundaries such as the Supabase client
-src/pages/               Route-level React components
-src/styles/              Global CSS and future shared visual foundations
-src/test/                Shared automated-test setup
-.github/workflows/       Continuous integration configuration
+docs/                   Product design, progress log, and architecture decisions
+public/                 Files copied directly into the production build
+src/exercises/          Exercise-library data access and selection interface
+src/lib/                Service boundaries such as the Supabase client
+src/pages/              Route-level React components
+src/styles/             Global CSS and future shared visual foundations
+src/test/               Shared automated-test setup
+.github/workflows/      Continuous integration configuration
 ```
 
 `src/main.tsx` starts React and provides browser routing. `src/App.tsx` maps URLs to page components. `src/lib/supabase.ts` creates the browser client only when a feature asks for it, so missing credentials cannot block the basic interface.
