@@ -211,3 +211,107 @@ input:focus-visible {
   width: 100%;
   margin-top: 1.75rem;
 }
+
+.dashboard-card {
+  width: min(100%, 54rem);
+}
+
+.dashboard-card h1 {
+  font-size: clamp(2rem, 7vw, 3.5rem);
+  line-height: 1.1;
+  max-width: 20ch;
+}
+
+.workouts {
+  margin-top: 2.5rem;
+}
+
+.section-heading p,
+.empty-workouts p {
+  color: #b7c2ba;
+  line-height: 1.5;
+}
+
+.workouts h2 {
+  font-size: 1.5rem;
+}
+
+.workouts h3 {
+  margin: 0 0 1rem;
+  overflow-wrap: anywhere;
+}
+
+.new-workout,
+.workout-card,
+.empty-workouts {
+  padding: 1.25rem;
+  border: 1px solid #34423a;
+  border-radius: 0.75rem;
+  background: #101713;
+}
+
+.template-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.template-form input {
+  width: 100%;
+  min-width: 0;
+  min-height: 3rem;
+  border: 1px solid #798b7e;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  background: #17211b;
+  color: #eef5f0;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.form-actions button {
+  flex: 1 1 8rem;
+}
+
+.secondary-button {
+  color: #b9f677;
+  background: transparent;
+  border-color: #798b7e;
+}
+
+.save-feedback {
+  min-height: 5rem;
+  line-height: 1.5;
+}
+
+.save-feedback p {
+  margin: 0;
+}
+
+.workout-notice {
+  min-height: 1.5rem;
+  color: #b9f677;
+  overflow-wrap: anywhere;
+}
+
+.workout-list {
+  display: grid;
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.workouts-loading {
+  min-height: 24rem;
+}
+
+.skeleton-row {
+  height: 6rem;
+  margin-top: 1rem;
+  border-radius: 0.75rem;
+  background: #34423a;
+}

@@ -51,6 +51,10 @@ Keep this migration as the versioned source of truth. If adopting the Supabase C
 later, mark this exact manually applied migration as applied before pushing more
 migrations; do not apply it twice.
 
+After the profile migration, apply
+`supabase/migrations/20260909000100_create_workout_templates.sql` once to enable
+saved workout names. The home page can then create and rename templates.
+
 ## 4. Database isolation check
 
 Run `supabase/tests/profiles.sql` in the SQL editor as postgres. It creates two
@@ -59,6 +63,10 @@ user's visibility under the authenticated role, checks denied client write and
 anonymous privileges, and checks cascading account deletion. It ends in ROLLBACK,
 so no synthetic accounts remain after success. If it errors, roll back the failed
 transaction before continuing. No email is sent by this SQL test.
+
+Also run `supabase/tests/workout_templates.sql` after the template migration to
+verify create/upsert/rename behavior, name validation, and cross-user isolation.
+This test also rolls back its synthetic accounts and templates.
 
 A successful run has no assertion errors. This tests database roles and policies;
 it does not test the hosted Auth email service.

@@ -6,6 +6,9 @@ import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import App from './App.tsx'
+import { listWorkoutTemplates } from './workouts/templates.ts'
+
+vi.mock('./workouts/templates.ts', () => ({ listWorkoutTemplates: vi.fn() }))
 
 const mocks = vi.hoisted(() => ({
   initialize: vi.fn(),
@@ -52,6 +55,7 @@ function emitSession(value: Session | null) {
 
 beforeEach(() => {
   vi.resetAllMocks()
+  vi.mocked(listWorkoutTemplates).mockResolvedValue([])
   mocks.listeners.clear()
   mocks.initialize.mockResolvedValue({ error: null })
   mocks.getSession.mockResolvedValue({ data: { session: null }, error: null })
