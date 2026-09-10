@@ -13,11 +13,79 @@ import { ExerciseImage } from '../exercises/ExerciseImage.tsx'
 import { blankExercise, blankSet, loadPlan, validatePlan } from './model.ts'
 import type { ExercisePlan, SetType } from './model.ts'
 import { EquipmentSetup } from '../equipment/EquipmentSetup.tsx'
+import { useProfile } from '../profile/profile-context.ts'
+import { UnitToggle } from '../ui/UnitToggle.tsx'
+import { displayWeight, parseWeight } from '../units/weight.ts'
+import type { WeightUnit } from '../units/weight.ts'
+
+function OptionalRepInput({
+  value,
+  label,
+  onChange,
+}: {
+  value: number | null
+  label: string
+  onChange: (value: number | null) => void
+}) {
+  const [text, setText] = useState(value?.toString() ?? '')
+  return (
+    <input
+      aria-label={label}
+      type="text"
+      inputMode="numeric"
+      placeholder="-"
+      value={text}
+      onFocus={(event) => event.currentTarget.select()}
+      onChange={(event) => {
+        const next = event.target.value
+        setText(next)
+        if (next === '') onChange(null)
+        else if (/^\d+$/.test(next)) onChange(Number(next))
+      }}
+    />
+  )
+}
+
+function OptionalWeightInput({
+  valueKg,
+  unit,
+  label,
+  onChange,
+}: {
+  valueKg: number | null
+  unit: WeightUnit
+  label: string
+  onChange: (value: number | null) => void
+}) {
+  const [text, setText] = useState(
+    valueKg == null ? '' : displayWeight(valueKg, unit),
+  )
+  return (
+    <input
+      aria-label={label}
+      type="text"
+      inputMode="decimal"
+      placeholder="-"
+      value={text}
+      onFocus={(event) => event.currentTarget.select()}
+      onChange={(event) => {
+        const next = event.target.value
+        setText(next)
+        if (next === '') onChange(null)
+        else {
+          const parsed = parseWeight(next, unit)
+          if (parsed !== null) onChange(parsed)
+        }
+      }}
+    />
+  )
+}
 export function WorkoutEditor() {
   const { id } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
   const { client } = useAuth()
+  const { profile } = useProfile()
   const [draftId] = useState(() => id ?? crypto.randomUUID())
   const [name, setName] = useState('')
   const [plans, setPlans] = useState<ExercisePlan[]>([])
@@ -31,6 +99,7 @@ export function WorkoutEditor() {
   const [query, setQuery] = useState('')
   const [group, setGroup] = useState<MuscleGroup | 'All'>('All')
   const [picker, setPicker] = useState(false)
+  const [unit, setUnit] = useState<WeightUnit>(profile.preferred_weight_unit)
   useEffect(() => {
     if (!client) return
     let active = true
@@ -112,8 +181,13 @@ export function WorkoutEditor() {
     )
   return (
     <>
-      <p className="eyebrow">Your training plan</p>
-      <h1>{id ? 'Edit workout' : 'Create workout'}</h1>
+      <div className="section-row editor-heading">
+        <div>
+          <p className="eyebrow">Your training plan</p>
+          <h1>{id ? 'Edit workout' : 'Create workout'}</h1>
+        </div>
+        <UnitToggle value={unit} onChange={setUnit} />
+      </div>
       {location.state?.needsTemplate && (
         <p className="intro">
           Add exercises and sets to create a workout you can start. You can also{' '}
@@ -142,7 +216,7 @@ export function WorkoutEditor() {
               exercise.equipment_type === 'bodyweight' &&
               !plan.uses_added_weight
             return (
-              <section className="panel" key={plan.exercise_id}>
+              <section className="routine-exercise" key={plan.exercise_id}>
                 <div className="section-row">
                   <h2>
                     {index + 1}. {exercise.name}
@@ -229,48 +303,51 @@ export function WorkoutEditor() {
                     <span>Set</span>
                     <span>Type</span>
                     <span>Reps</span>
-                    <span>{bodyweight ? '' : 'kg'}</span>
+                    <span>{bodyweight ? '' : unit}</span>
                     <span />
                   </div>
                   {plan.sets.map((set, si) => (
                     <div className="set-row" key={set.id}>
                       <span>{si + 1}</span>
-                      <select
+                      <fieldset
+                        className="set-type-toggle"
                         aria-label={`${exercise.name} set ${si + 1} type`}
-                        value={set.set_type}
-                        onChange={(e) =>
-                          change(index, {
-                            sets: plan.sets.map((s) =>
-                              s.id === set.id
-                                ? { ...s, set_type: e.target.value as SetType }
-                                : s,
-                            ),
-                          })
-                        }
                       >
-                        {['standard', 'warmup', 'failure'].map((t) => (
-                          <option key={t}>{t}</option>
-                        ))}
-                      </select>
-                      <input
-                        aria-label={`${exercise.name} set ${si + 1} target reps`}
-                        type="number"
-                        min={0}
-                        max={1000}
-                        placeholder="-"
-                        value={set.target_reps ?? ''}
-                        onChange={(e) =>
+                        {(['standard', 'warmup', 'failure'] as SetType[]).map(
+                          (type) => (
+                            <button
+                              type="button"
+                              key={type}
+                              className={set.set_type === type ? 'active' : ''}
+                              aria-pressed={set.set_type === type}
+                              aria-label={type}
+                              onClick={() =>
+                                change(index, {
+                                  sets: plan.sets.map((row) =>
+                                    row.id === set.id
+                                      ? { ...row, set_type: type }
+                                      : row,
+                                  ),
+                                })
+                              }
+                            >
+                              {type === 'standard'
+                                ? 'Work'
+                                : type === 'warmup'
+                                  ? 'Warm'
+                                  : 'Fail'}
+                            </button>
+                          ),
+                        )}
+                      </fieldset>
+                      <OptionalRepInput
+                        key={`${set.id}-reps`}
+                        label={`${exercise.name} set ${si + 1} target reps`}
+                        value={set.target_reps}
+                        onChange={(target_reps) =>
                           change(index, {
-                            sets: plan.sets.map((s) =>
-                              s.id === set.id
-                                ? {
-                                    ...s,
-                                    target_reps:
-                                      e.target.value === ''
-                                        ? null
-                                        : Number(e.target.value),
-                                  }
-                                : s,
+                            sets: plan.sets.map((row) =>
+                              row.id === set.id ? { ...row, target_reps } : row,
                             ),
                           })
                         }
@@ -278,26 +355,17 @@ export function WorkoutEditor() {
                       {bodyweight ? (
                         <span />
                       ) : (
-                        <input
-                          aria-label={`${exercise.name} set ${si + 1} target weight`}
-                          type="number"
-                          min={0}
-                          max={99999}
-                          step="0.01"
-                          placeholder="-"
-                          value={set.target_weight ?? ''}
-                          onChange={(e) =>
+                        <OptionalWeightInput
+                          key={`${set.id}-${unit}`}
+                          label={`${exercise.name} set ${si + 1} target weight`}
+                          valueKg={set.target_weight}
+                          unit={unit}
+                          onChange={(target_weight) =>
                             change(index, {
-                              sets: plan.sets.map((s) =>
-                                s.id === set.id
-                                  ? {
-                                      ...s,
-                                      target_weight:
-                                        e.target.value === ''
-                                          ? null
-                                          : Number(e.target.value),
-                                    }
-                                  : s,
+                              sets: plan.sets.map((row) =>
+                                row.id === set.id
+                                  ? { ...row, target_weight }
+                                  : row,
                               ),
                             })
                           }
@@ -322,11 +390,22 @@ export function WorkoutEditor() {
                   type="button"
                   className="secondary-button"
                   disabled={plan.sets.length >= 100}
-                  onClick={() =>
-                    change(index, { sets: [...plan.sets, blankSet()] })
-                  }
+                  onClick={() => {
+                    const previous = plan.sets.at(-1)
+                    change(index, {
+                      sets: [
+                        ...plan.sets,
+                        {
+                          ...blankSet(),
+                          set_type: previous?.set_type ?? 'standard',
+                          target_reps: previous?.target_reps ?? null,
+                          target_weight: previous?.target_weight ?? null,
+                        },
+                      ],
+                    })
+                  }}
                 >
-                  Add set
+                  + Add set
                 </button>
                 <details className="exercise-settings">
                   <summary>Rest and progression settings</summary>

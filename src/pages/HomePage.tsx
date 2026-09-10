@@ -5,6 +5,7 @@ import { useProfile } from '../profile/profile-context.ts'
 import { encouragement, localDate, weekBounds } from '../sessions/rules.ts'
 import { sessionColumns } from '../sessions/data.ts'
 import type { SessionRow } from '../sessions/data.ts'
+import { fromKilograms, roundWeight } from '../units/weight.ts'
 type Point = {
   exercise_id: string
   exercise_name: string
@@ -100,6 +101,17 @@ export function HomePage() {
   const series = (points ?? [])
     .filter((p) => `${p.exercise_id}:${p.equipment_key}` === key)
     .toSorted((a, b) => a.completed_at.localeCompare(b.completed_at))
+    .map((point) =>
+      point.metric === 'kg'
+        ? {
+            ...point,
+            value: roundWeight(
+              fromKilograms(point.value, profile.preferred_weight_unit),
+            ),
+            metric: profile.preferred_weight_unit,
+          }
+        : point,
+    )
   function retry(label: string) {
     return (
       <div className="inline-error">
@@ -118,8 +130,10 @@ export function HomePage() {
   }
   return (
     <>
-      <p className="eyebrow">Your training, at a glance</p>
-      <h1>Hi, {name}!</h1>
+      <header className="dashboard-heading">
+        <p className="eyebrow">Your training</p>
+        <h1>Ready to put the work in, {name}?</h1>
+      </header>
       <div className="dashboard-grid">
         <section className="panel workout-focus">
           <h2>This week</h2>
@@ -134,9 +148,9 @@ export function HomePage() {
               <p className="motivation">
                 {encouragement(days.length, goal, name)}
               </p>
-              <p>
-                <strong className="large-number">{days.length}</strong> of{' '}
-                {goal} gym days
+              <p className="weekly-score">
+                <strong className="large-number">{days.length}</strong>
+                <span>/ {goal} workouts</span>
               </p>
               <progress
                 value={Math.min(days.length, goal)}

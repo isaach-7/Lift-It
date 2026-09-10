@@ -21,12 +21,11 @@ export function nextWeight(
     : Math.max(0, weight - increment)
 }
 export function encouragement(days: number, goal: number, name: string) {
-  if (days >= goal)
-    return `Smashed it, ${name}! Don't forget, you've always got room for one more...`
-  if (days === 0) return `Your first workout of the week starts here, ${name}.`
-  if (goal - days === 1) return "Only one more workout, and you've smashed it!"
-  if (2 * days >= goal) return "Halfway there! Don't stop now!"
-  return `You've made a start, ${name}. Keep it going!`
+  if (days >= goal) return 'Weekly goal complete.'
+  if (days === 0) return `Ready to train, ${name}? Start one today.`
+  const remaining = goal - days
+  if (remaining === 1) return 'One workout to go this week.'
+  return `Nice work. ${days} this week, ${remaining} to go.`
 }
 export function weekBounds(now = new Date()) {
   const start = new Date(now)

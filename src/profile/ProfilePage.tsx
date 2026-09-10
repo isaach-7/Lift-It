@@ -5,6 +5,14 @@ import { useAuth } from '../auth/auth-context.ts'
 import { useProfile } from './profile-context.ts'
 import type { Profile } from './profile.ts'
 import { ThemePicker } from '../ui/ThemePicker.tsx'
+import { UnitToggle } from '../ui/UnitToggle.tsx'
+import {
+  convertWeightText,
+  displayWeight,
+  parseWeight,
+} from '../units/weight.ts'
+import type { WeightUnit } from '../units/weight.ts'
+import { validateProfile } from '../lib/form-validation.ts'
 export function ProfilePage({ onboarding = false }: { onboarding?: boolean }) {
   const { client } = useAuth()
   const { profile, setProfile } = useProfile()
@@ -12,6 +20,7 @@ export function ProfilePage({ onboarding = false }: { onboarding?: boolean }) {
   const [goal, setGoal] = useState(String(profile.weekly_goal ?? 4))
   const [height, setHeight] = useState(profile.height_cm?.toString() ?? '')
   const [weight, setWeight] = useState('')
+  const [unit, setUnit] = useState<WeightUnit>(profile.preferred_weight_unit)
   const [weightId, setWeightId] = useState(() => crypto.randomUUID())
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -45,13 +54,26 @@ export function ProfilePage({ onboarding = false }: { onboarding?: boolean }) {
     setBusy(true)
     setError('')
     setSaved(false)
+    const profileValidation = validateProfile({ name, goal, height })
+    if (profileValidation) {
+      setError(profileValidation)
+      setBusy(false)
+      return
+    }
+    const weightKg = weight === '' ? null : parseWeight(weight, unit)
+    if (weight !== '' && (weightKg === null || weightKg <= 0)) {
+      setError('Enter a body weight greater than zero.')
+      setBusy(false)
+      return
+    }
     try {
       const { data, error } = await client.rpc('save_profile', {
         p_name: name.trim(),
         p_goal: Number(goal),
         p_height: height === '' ? null : Number(height),
-        p_weight: weight === '' ? null : Number(weight),
+        p_weight: weightKg,
         p_weight_id: weightId,
+        p_unit: unit,
       })
       if (error) throw error
       setProfile(rpcRow<Profile>(data))
@@ -77,6 +99,19 @@ export function ProfilePage({ onboarding = false }: { onboarding?: boolean }) {
         Choose your weekly gym-day goal. Height and body weight are optional and
         can be added later.
       </p>
+      <div className="profile-unit-row">
+        <div>
+          <strong>Preferred weight unit</strong>
+          <span>Used for workouts, progress and body weight.</span>
+        </div>
+        <UnitToggle
+          value={unit}
+          onChange={(next) => {
+            setWeight((current) => convertWeightText(current, unit, next))
+            setUnit(next)
+          }}
+        />
+      </div>
       <form onSubmit={save} className="panel">
         <fieldset disabled={busy} className="field-grid">
           <label>
@@ -111,7 +146,7 @@ export function ProfilePage({ onboarding = false }: { onboarding?: boolean }) {
             />
           </label>
           <label>
-            {onboarding ? 'Body weight' : 'New weight entry'} (kg, optional)
+            {onboarding ? 'Body weight' : 'New weight entry'} ({unit}, optional)
             <input
               type="number"
               min="0.01"
@@ -171,7 +206,9 @@ export function ProfilePage({ onboarding = false }: { onboarding?: boolean }) {
                 {history.map((row) => (
                   <li key={row.id}>
                     <time>{new Date(row.logged_at).toLocaleDateString()}</time>
-                    <strong>{row.weight_kg} kg</strong>
+                    <strong>
+                      {displayWeight(row.weight_kg, unit)} {unit}
+                    </strong>
                   </li>
                 ))}
               </ul>

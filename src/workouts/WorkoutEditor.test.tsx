@@ -5,6 +5,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { beforeEach, it, expect, vi } from 'vitest'
 import { WorkoutEditor } from './WorkoutEditor.tsx'
 import { AuthContext } from '../auth/auth-context.ts'
+import { ProfileContext } from '../profile/profile-context.ts'
 import { listExercises } from '../exercises/exercise-library.ts'
 vi.mock('../exercises/exercise-library.ts', async (original) => ({
   ...(await original<typeof import('../exercises/exercise-library.ts')>()),
@@ -19,15 +20,29 @@ function view() {
         state: { status: 'ready', session: null },
       }}
     >
-      <RouterProvider
-        router={createMemoryRouter(
-          [
-            { path: '/workouts/new', element: <WorkoutEditor /> },
-            { path: '/workouts', element: <p>Workout list</p> },
-          ],
-          { initialEntries: ['/workouts/new'] },
-        )}
-      />
+      <ProfileContext
+        value={{
+          profile: {
+            id: 'a',
+            preferred_name: 'Alex',
+            height_cm: null,
+            weekly_goal: 4,
+            preferred_weight_unit: 'kg',
+            onboarding_completed_at: '2026-09-09',
+          },
+          setProfile: vi.fn(),
+        }}
+      >
+        <RouterProvider
+          router={createMemoryRouter(
+            [
+              { path: '/workouts/new', element: <WorkoutEditor /> },
+              { path: '/workouts', element: <p>Workout list</p> },
+            ],
+            { initialEntries: ['/workouts/new'] },
+          )}
+        />
+      </ProfileContext>
     </AuthContext>,
   )
 }
@@ -55,7 +70,7 @@ it('creates blank standard sets and saves optional targets atomically', async ()
   await user.click(screen.getByRole('button', { name: 'Add exercises' }))
   await user.click(screen.getByRole('button', { name: 'Add exercise' }))
   expect(screen.getByLabelText('Bench press set 1 target weight')).toHaveValue(
-    null,
+    '',
   )
   await user.type(screen.getByLabelText('Bench press set 1 target reps'), '8')
   await user.click(screen.getByRole('button', { name: 'Save workout' }))
@@ -117,5 +132,5 @@ it('defaults bodyweight to reps and requires an explicit added-weight choice', a
     screen.queryByLabelText('Pull-up set 1 target weight'),
   ).not.toBeInTheDocument()
   await user.click(screen.getByLabelText('Track added weight'))
-  expect(screen.getByLabelText('Pull-up set 1 target weight')).toHaveValue(null)
+  expect(screen.getByLabelText('Pull-up set 1 target weight')).toHaveValue('')
 })

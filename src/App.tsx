@@ -4,6 +4,7 @@ import { AuthGate } from './auth/AuthGate.tsx'
 import { AuthProvider } from './auth/AuthProvider.tsx'
 import { ProfileProvider } from './profile/ProfileProvider.tsx'
 import { Layout } from './ui/Layout.tsx'
+import { PageMetadata } from './ui/PageMetadata.tsx'
 const WorkoutEditor = lazy(() =>
   import('./workouts/WorkoutEditor.tsx').then((m) => ({
     default: m.WorkoutEditor,
@@ -27,6 +28,7 @@ export function PrivateLayout() {
 export function Root() {
   return (
     <AuthProvider>
+      <PageMetadata />
       <AuthGate>
         <Outlet />
       </AuthGate>

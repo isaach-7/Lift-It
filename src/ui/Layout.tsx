@@ -1,6 +1,7 @@
 import { Suspense, useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../auth/auth-context.ts'
+import { Brand } from './Brand.tsx'
 export function Layout() {
   const { client } = useAuth()
   const [busy, setBusy] = useState(false)
@@ -21,9 +22,7 @@ export function Layout() {
   return (
     <div className="app-shell">
       <header className="app-header">
-        <NavLink className="brand" to="/">
-          LiftIt
-        </NavLink>
+        <Brand />
         <nav aria-label="Main navigation">
           <NavLink to="/" end>
             Home
@@ -32,7 +31,7 @@ export function Layout() {
           <NavLink to="/profile">Profile</NavLink>
         </nav>
         <button
-          className="secondary-button"
+          className="secondary-button sign-out-button"
           disabled={busy}
           onClick={() => void signOut()}
         >

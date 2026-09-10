@@ -27,17 +27,17 @@ describe('weight progression boundaries', () => {
 })
 describe('weekly motivation', () => {
   it.each([1, 2, 4, 7])('handles goal %s and exceeded goal', (goal) => {
-    expect(encouragement(0, goal, 'Alex')).toContain('first workout')
-    expect(encouragement(goal, goal, 'Alex')).toContain('Smashed it, Alex')
-    expect(encouragement(goal + 1, goal, 'Alex')).toContain('Smashed it, Alex')
+    expect(encouragement(0, goal, 'Alex')).toContain('Ready to train')
+    expect(encouragement(goal, goal, 'Alex')).toContain('goal complete')
+    expect(encouragement(goal + 1, goal, 'Alex')).toContain('goal complete')
   })
   it('matches the four-day sequence', () => {
-    expect(encouragement(1, 4, 'Alex')).toContain("You've made a start")
-    expect(encouragement(2, 4, 'Alex')).toContain('Halfway')
-    expect(encouragement(3, 4, 'Alex')).toContain('Only one more')
+    expect(encouragement(1, 4, 'Alex')).toContain('3 to go')
+    expect(encouragement(2, 4, 'Alex')).toContain('2 to go')
+    expect(encouragement(3, 4, 'Alex')).toContain('One workout')
   })
   it('prioritizes one remaining above halfway', () =>
-    expect(encouragement(1, 2, 'Alex')).toContain('Only one more'))
+    expect(encouragement(1, 2, 'Alex')).toContain('One workout'))
   it('uses local Monday midnight through next Monday', () => {
     const { start, end } = weekBounds(new Date(2026, 8, 13, 23, 59))
     expect(localDate(start)).toBe('2026-09-07')

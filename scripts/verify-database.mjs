@@ -15,10 +15,16 @@ try {
     grant execute on function auth.uid() to authenticated,anon;
     alter default privileges in schema public grant all on tables to anon,authenticated;
   `)
-  for (const name of (await readdir('supabase/migrations')).sort()) {
+  const migrations = (await readdir('supabase/migrations'))
+    .filter((name) => /^\d{14}_[a-z0-9_]+\.sql$/.test(name))
+    .sort()
+  for (const name of migrations) {
     await db.exec(await readFile(`supabase/migrations/${name}`, 'utf8'))
   }
-  for (const name of (await readdir('supabase/tests')).sort()) {
+  const tests = (await readdir('supabase/tests'))
+    .filter((name) => /^[a-z0-9_]+\.sql$/.test(name))
+    .sort()
+  for (const name of tests) {
     await db.exec(await readFile(`supabase/tests/${name}`, 'utf8'))
     console.log(`PASS ${name}`)
   }

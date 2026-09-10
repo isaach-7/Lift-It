@@ -6,7 +6,7 @@ insert into auth.users(id,email) values
 set local role authenticated;
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000001',true);
 do $$
-declare eid uuid; template_id uuid := '20000000-0000-4000-8000-000000000001'; sid uuid := '30000000-0000-4000-8000-000000000001'; se uuid; st uuid; result public.sets; plan jsonb; p public.profiles;
+declare eid uuid; template_id uuid := '20000000-0000-4000-8000-000000000001'; sid uuid := '30000000-0000-4000-8000-000000000001'; se uuid; st uuid; result public.sets; undone jsonb; plan jsonb; p public.profiles;
 begin
  p:=public.save_profile(' Alex ',4,180,80,'40000000-0000-4000-8000-000000000001');
  perform public.save_profile('Alex',4,180,80,'40000000-0000-4000-8000-000000000001');
@@ -27,6 +27,11 @@ begin
  select id into st from public.sets where session_exercise_id=se;
  result:=public.log_workout_set(st,11,40);
  if result.next_weight<>42.5 then raise exception 'Increment failed'; end if;
+ undone:=public.unlog_workout_set(st);
+ if undone->'set'->>'completed_at' is not null or undone->'set'->>'reps' is not null or exists(select 1 from public.exercise_progression) then raise exception 'Set undo failed'; end if;
+ undone:=public.unlog_workout_set(st);
+ if undone->'set'->>'completed_at' is not null then raise exception 'Set undo retry failed'; end if;
+ result:=public.log_workout_set(st,11,40);
  result:=public.log_workout_set(st,11,40);
  if result.next_weight<>42.5 or (select current_weight from public.exercise_progression)<>42.5 then raise exception 'Retry applied progression twice'; end if;
  begin perform public.log_workout_set(st,12,40); raise exception 'Changed retry accepted'; exception when raise_exception then if sqlerrm='Changed retry accepted' then raise; end if; end;
@@ -49,6 +54,11 @@ begin
  perform public.finish_workout(sid);
  if (select count(*) from public.weekly_attendance(now()-interval '1 day',now()+interval '1 day','Europe/London'))<>1 then raise exception 'Attendance failed'; end if;
  if (select count(*) from public.exercise_progress(now()-interval '1 day'))<>1 then raise exception 'Progress missing'; end if;
+ perform public.save_workout_template(template_id,'Skipped session',plan);
+ sid:=public.start_workout(gen_random_uuid(),template_id);
+ perform public.finish_workout(sid);
+ if (select status from public.workout_sessions where id=sid)<>'completed' then raise exception 'Incomplete session did not finish'; end if;
+ if exists(select 1 from public.sets x join public.session_exercises e on e.id=x.session_exercise_id where e.session_id=sid and (x.completed_at is not null or x.reps is not null or x.weight is not null)) then raise exception 'Incomplete set became performed'; end if;
  select id into eid from public.exercises where equipment_type='bodyweight' and supports_added_weight limit 1;
  plan:=jsonb_set(plan,'{0,exercise_id}',to_jsonb(eid));
  plan:=jsonb_set(plan,'{0,uses_added_weight}','false');
@@ -78,10 +88,12 @@ begin
  begin perform public.start_workout(gen_random_uuid(),'20000000-0000-4000-8000-000000000001'); raise exception 'Cross-user start accepted'; exception when raise_exception then if sqlerrm='Cross-user start accepted' then raise; end if; end;
  begin perform public.save_workout_template('20000000-0000-4000-8000-000000000001','Stolen','[]'); raise exception 'Cross-user template accepted'; exception when raise_exception then if sqlerrm='Cross-user template accepted' then raise; end if; end;
  begin perform public.finish_workout('30000000-0000-4000-8000-000000000001'); raise exception 'Cross-user finish accepted'; exception when raise_exception then if sqlerrm='Cross-user finish accepted' then raise; end if; end;
+ begin perform public.unlog_workout_set('50000000-0000-4000-8000-000000000001'); raise exception 'Cross-user undo accepted'; exception when raise_exception then if sqlerrm='Cross-user undo accepted' then raise; end if; end;
 end $$;
 reset role;
 set local role anon;
 do $$ begin
  begin perform public.start_workout(gen_random_uuid(),gen_random_uuid()); raise exception 'Anonymous RPC allowed'; exception when insufficient_privilege then null; end;
+ begin perform public.unlog_workout_set(gen_random_uuid()); raise exception 'Anonymous undo allowed'; exception when insufficient_privilege then null; end;
 end $$;
 rollback;

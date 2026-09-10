@@ -11,6 +11,7 @@ const profile = {
   preferred_name: 'Alex',
   height_cm: null,
   weekly_goal: 4,
+  preferred_weight_unit: 'kg' as const,
   onboarding_completed_at: '2026-09-09',
 }
 function view() {
@@ -59,7 +60,7 @@ it('keeps start available when the chart fails', async () => {
     'Unable to load exercise progress',
   )
   expect(
-    screen.getByText('Your first workout of the week starts here, Alex.'),
+    screen.getByText('Ready to train, Alex? Start one today.'),
   ).toBeInTheDocument()
 })
 it('shows genuine empty states without invented chart values', async () => {

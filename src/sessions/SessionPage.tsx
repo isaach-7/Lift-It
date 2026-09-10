@@ -7,6 +7,16 @@ import type { Exercise } from '../exercises/exercise-library.ts'
 import { loadSession, setColumns } from './data.ts'
 import type { LoggedSet, SessionExercise, SessionRow } from './data.ts'
 import { RestTimer } from './RestTimer.tsx'
+import { SessionElapsed } from './SessionElapsed.tsx'
+import { useProfile } from '../profile/profile-context.ts'
+import { ConfirmationDialog } from '../ui/ConfirmationDialog.tsx'
+import { UnitToggle } from '../ui/UnitToggle.tsx'
+import {
+  convertWeightText,
+  displayWeight,
+  parseWeight,
+} from '../units/weight.ts'
+import type { WeightUnit } from '../units/weight.ts'
 
 type Draft = {
   reps: string
@@ -14,9 +24,14 @@ type Draft = {
   scope: 'once' | 'permanent' | ''
   dirty: boolean
 }
+type UnloggedSetResult = {
+  set: LoggedSet
+  current_weight: number | null
+}
 export function SessionPage() {
   const { id } = useParams()
   const { client, state } = useAuth()
+  const { profile } = useProfile()
   const navigate = useNavigate()
   const userId = state.status === 'ready' ? state.session?.user.id : undefined
   const storageKey = `liftit-session-${userId}-${id}`
@@ -37,6 +52,8 @@ export function SessionPage() {
   const [finishing, setFinishing] = useState(false)
   const [timer, setTimer] = useState<number | null>(null)
   const [storageError, setStorageError] = useState(false)
+  const [unit, setUnit] = useState<WeightUnit>(profile.preferred_weight_unit)
+  const [confirmingFinish, setConfirmingFinish] = useState(false)
   const inFlight = useRef(new Set<string>())
   const addIds = useRef<Record<string, string>>({})
   useEffect(() => {
@@ -71,6 +88,7 @@ export function SessionPage() {
             const parsed = JSON.parse(raw) as {
               drafts?: Record<string, Draft>
               timer?: number
+              unit?: WeightUnit
             }
             const restored: Record<string, Draft> = {}
             for (const s of data.sets) {
@@ -82,7 +100,17 @@ export function SessionPage() {
                 typeof draft.weight === 'string' &&
                 ['', 'once', 'permanent'].includes(draft.scope)
               )
-                restored[s.id] = draft
+                restored[s.id] = {
+                  ...draft,
+                  weight:
+                    parsed.unit && parsed.unit !== profile.preferred_weight_unit
+                      ? convertWeightText(
+                          draft.weight,
+                          parsed.unit,
+                          profile.preferred_weight_unit,
+                        )
+                      : draft.weight,
+                }
             }
             setDrafts(restored)
             if (typeof parsed.timer === 'number') setTimer(parsed.timer)
@@ -100,17 +128,17 @@ export function SessionPage() {
     return () => {
       active = false
     }
-  }, [client, id, userId, storageKey, attempt])
+  }, [client, id, userId, storageKey, attempt, profile.preferred_weight_unit])
   useEffect(() => {
     if (loading || loadError) return
     try {
-      localStorage.setItem(storageKey, JSON.stringify({ drafts, timer }))
+      localStorage.setItem(storageKey, JSON.stringify({ drafts, timer, unit }))
     } catch {
       // Surface failure of the external recovery store instead of implying durability.
       // oxlint-disable-next-line react/set-state-in-effect
       setStorageError(true)
     }
-  }, [drafts, timer, storageKey, loading, loadError])
+  }, [drafts, timer, unit, storageKey, loading, loadError])
   useEffect(() => {
     const unload = (event: BeforeUnloadEvent) => {
       if (inFlight.current.size || Object.values(drafts).some((d) => d.dirty))
@@ -127,8 +155,15 @@ export function SessionPage() {
           (e.auto_increment_enabled && s.set_type !== 'warmup'
             ? (recommendations[`${e.exercise_id}:${e.equipment_key}`] ??
               s.target_weight)
-            : s.target_weight
-          )?.toString() ?? '',
+            : s.target_weight) == null
+            ? ''
+            : displayWeight(
+                (e.auto_increment_enabled && s.set_type !== 'warmup'
+                  ? (recommendations[`${e.exercise_id}:${e.equipment_key}`] ??
+                    s.target_weight)
+                  : s.target_weight)!,
+                unit,
+              ),
         scope: '',
         dirty: false,
       }
@@ -162,25 +197,39 @@ export function SessionPage() {
       )
     setErrors((old) => ({ ...old, [saved.id]: '' }))
   }
+  function acceptUnlogged(
+    saved: LoggedSet,
+    e: SessionExercise,
+    draft: Draft,
+    currentWeight: number | null,
+  ) {
+    setSets((rows) => rows.map((row) => (row.id === saved.id ? saved : row)))
+    setDrafts((old) => ({ ...old, [saved.id]: draft }))
+    setRecommendations((old) => {
+      const next = { ...old }
+      const key = `${e.exercise_id}:${e.equipment_key}`
+      if (currentWeight == null) delete next[key]
+      else next[key] = currentWeight
+      return next
+    })
+    setErrors((old) => ({ ...old, [saved.id]: '' }))
+  }
   async function log(s: LoggedSet, e: SessionExercise, bodyweight: boolean) {
     if (!client || inFlight.current.has(s.id) || finishing) return
     const d = draftFor(s, e)
     const reps = Number(d.reps)
-    const weight = bodyweight ? null : Number(d.weight)
-    if (
-      !d.reps ||
-      !Number.isInteger(reps) ||
-      reps < 0 ||
-      reps > 1000 ||
-      (!bodyweight &&
-        (!d.weight ||
-          !Number.isFinite(weight) ||
-          weight! < 0 ||
-          weight! >= 100000))
-    ) {
+    if (!d.reps.trim() || !Number.isInteger(reps) || reps < 1 || reps > 1000) {
       setErrors((old) => ({
         ...old,
-        [s.id]: 'Enter valid reps and weight before saving.',
+        [s.id]: 'Enter the whole number of reps completed.',
+      }))
+      return
+    }
+    const weight = bodyweight ? null : parseWeight(d.weight, unit)
+    if (!bodyweight && weight === null) {
+      setErrors((old) => ({
+        ...old,
+        [s.id]: 'Enter a valid weight of 0 or more.',
       }))
       return
     }
@@ -241,6 +290,48 @@ export function SessionPage() {
       setPending([...inFlight.current])
     }
   }
+  async function unlog(s: LoggedSet, e: SessionExercise) {
+    if (!client || inFlight.current.has(s.id) || finishing) return
+    const draft: Draft = {
+      reps: String(s.reps ?? ''),
+      weight: s.weight == null ? '' : displayWeight(s.weight, unit),
+      scope: s.override_scope ?? '',
+      dirty: true,
+    }
+    inFlight.current.add(s.id)
+    setPending([...inFlight.current])
+    setErrors((old) => ({ ...old, [s.id]: '' }))
+    try {
+      const { data, error } = await client.rpc('unlog_workout_set', {
+        p_id: s.id,
+      })
+      if (error) throw error
+      const result = data as UnloggedSetResult
+      acceptUnlogged(result.set, e, draft, result.current_weight)
+    } catch {
+      // A lost response may follow a committed undo. Read the row before failing.
+      try {
+        const { data, error } = await client
+          .from('sets')
+          .select(setColumns)
+          .eq('id', s.id)
+          .single<LoggedSet>()
+        if (!error && data && !data.completed_at) {
+          acceptUnlogged(data, e, draft, null)
+          return
+        }
+      } catch {
+        /* Keep the confirmed completed state when the undo cannot be verified. */
+      }
+      setErrors((old) => ({
+        ...old,
+        [s.id]: 'Undo not confirmed. The set remains saved. Retry to edit it.',
+      }))
+    } finally {
+      inFlight.current.delete(s.id)
+      setPending([...inFlight.current])
+    }
+  }
   async function add(e: SessionExercise) {
     if (!client || finishing || inFlight.current.has(e.id)) return
     inFlight.current.add(e.id)
@@ -248,6 +339,10 @@ export function SessionPage() {
     setErrors((old) => ({ ...old, [e.id]: '' }))
     const requestId = addIds.current[e.id] ?? crypto.randomUUID()
     addIds.current[e.id] = requestId
+    const previous = sets
+      .filter((set) => set.session_exercise_id === e.id)
+      .toSorted((a, b) => a.set_number - b.set_number)
+      .at(-1)
     try {
       const { data, error } = await client.rpc('add_workout_set', {
         p_id: requestId,
@@ -259,6 +354,24 @@ export function SessionPage() {
       setSets((rows) =>
         rows.some((s) => s.id === saved.id) ? rows : [...rows, saved],
       )
+      if (previous) {
+        const previousDraft = draftFor(previous, e)
+        setDrafts((old) => ({
+          ...old,
+          [saved.id]: {
+            reps: previous.completed_at
+              ? String(previous.reps ?? '')
+              : previousDraft.reps,
+            weight: previous.completed_at
+              ? previous.weight == null
+                ? ''
+                : displayWeight(previous.weight, unit)
+              : previousDraft.weight,
+            scope: '',
+            dirty: false,
+          },
+        }))
+      }
       delete addIds.current[e.id]
     } catch {
       setErrors((old) => ({
@@ -270,26 +383,25 @@ export function SessionPage() {
       setPending([...inFlight.current])
     }
   }
-  async function finish(abandon = false) {
+  async function finish(abandon = false, confirmed = false) {
     if (!client || !id || finishing || inFlight.current.size) return
     if (
       !abandon &&
-      (Object.values(errors).some(Boolean) ||
-        Object.values(drafts).some((d) => d.dirty))
+      Object.values(errors).some((message) =>
+        message.startsWith('Save not confirmed'),
+      )
     ) {
-      setFinishError('Save or resolve your entered sets before finishing.')
+      setFinishError('Retry the unconfirmed set save before finishing.')
       return
     }
-    if (!abandon && !sets.some((s) => s.completed_at)) {
-      setFinishError('Save at least one completed set first.')
+    if (!abandon && !confirmed && sets.some((s) => !s.completed_at)) {
+      setConfirmingFinish(true)
       return
     }
     if (
-      (abandon || sets.some((s) => !s.completed_at)) &&
+      abandon &&
       !window.confirm(
-        abandon
-          ? 'Abandon this workout? It will not count towards your goal.'
-          : 'Finish with remaining planned sets incomplete?',
+        'Abandon this workout? It will not count towards your goal.',
       )
     )
       return
@@ -335,12 +447,41 @@ export function SessionPage() {
       </section>
     )
   const active = session.status === 'in_progress'
+  const incomplete = sets.filter((set) => !set.completed_at).length
   return (
     <>
-      <p className="eyebrow">
-        {active ? 'Workout in progress' : session.status}
-      </p>
-      <h1>{session.name}</h1>
+      <header className="session-header">
+        <div>
+          <p className="eyebrow">
+            {active ? 'Workout in progress' : session.status}
+          </p>
+          <h1>{session.name}</h1>
+          <p className="session-meta">
+            {active && <SessionElapsed startedAt={session.started_at} />}
+            <span>{exercises.length} exercises</span>
+            <span>
+              {sets.filter((set) => set.completed_at).length} sets done
+            </span>
+          </p>
+        </div>
+        <UnitToggle
+          value={unit}
+          onChange={(next) => {
+            setDrafts((current) =>
+              Object.fromEntries(
+                Object.entries(current).map(([key, draft]) => [
+                  key,
+                  {
+                    ...draft,
+                    weight: convertWeightText(draft.weight, unit, next),
+                  },
+                ]),
+              ),
+            )
+            setUnit(next)
+          }}
+        />
+      </header>
       {storageError && (
         <p role="alert">
           Local recovery storage is unavailable. Keep this page open until
@@ -355,10 +496,19 @@ export function SessionPage() {
         const bodyweight =
           exercise?.equipment_type === 'bodyweight' && !e.uses_added_weight
         return (
-          <section className="panel" key={e.id}>
-            <h2>{exercise?.name ?? 'Exercise'}</h2>
-            <p className="muted">
-              {e.equipment_label} / {e.rep_range_lower}-{e.rep_range_upper} reps
+          <section
+            className={`workout-exercise ${bodyweight ? 'bodyweight' : ''}`}
+            key={e.id}
+          >
+            <div className="exercise-log-heading">
+              <div>
+                <p className="exercise-position">Exercise {e.position + 1}</p>
+                <h2>{exercise?.name ?? 'Exercise'}</h2>
+              </div>
+              <span>{e.equipment_label}</span>
+            </div>
+            <p className="muted exercise-prescription">
+              Target {e.rep_range_lower}-{e.rep_range_upper} reps
               {e.auto_increment_enabled ? ' / Auto-progression on' : ''}
             </p>
             {exercise && (
@@ -371,6 +521,13 @@ export function SessionPage() {
                 </ol>
               </details>
             )}
+            <div className="live-set-heading" aria-hidden="true">
+              <span>Set</span>
+              <span>Plan</span>
+              {!bodyweight && <span>{unit}</span>}
+              <span>Reps</span>
+              <span>Done</span>
+            </div>
             {sets
               .filter((s) => s.session_exercise_id === e.id)
               .map((s) => {
@@ -379,54 +536,83 @@ export function SessionPage() {
                 const busy = pending.includes(s.id)
                 return (
                   <div className="live-set" key={s.id}>
-                    <div className="set-row">
-                      <span>
-                        {s.set_number + 1}
-                        <small>{s.set_type}</small>
+                    <div className={`set-row ${saved ? 'is-complete' : ''}`}>
+                      <span className="set-number">
+                        <strong>{s.set_number + 1}</strong>
+                        <small>
+                          {s.set_type === 'standard' ? 'work' : s.set_type}
+                        </small>
                       </span>
-                      <label>
-                        Reps
-                        <input
-                          type="number"
-                          min={0}
-                          max={1000}
-                          inputMode="numeric"
-                          disabled={saved || busy || !active}
-                          value={saved ? (s.reps ?? '') : d.reps}
-                          onChange={(event) =>
-                            edit(s, e, { reps: event.target.value })
-                          }
-                        />
-                      </label>
-                      {bodyweight ? (
-                        <span>Bodyweight</span>
-                      ) : (
+                      <span className="planned-value">
+                        {s.target_weight != null && !bodyweight
+                          ? `${displayWeight(s.target_weight, unit)} x `
+                          : ''}
+                        {s.target_reps ?? '-'}
+                      </span>
+                      {!bodyweight && (
                         <label>
-                          kg
+                          <span className="sr-only">Weight in {unit}</span>
                           <input
-                            type="number"
-                            min={0}
-                            step="0.01"
+                            aria-label={`${exercise?.name ?? 'Exercise'} set ${s.set_number + 1} weight in ${unit}`}
+                            type="text"
                             inputMode="decimal"
                             disabled={saved || busy || !active}
-                            value={saved ? (s.weight ?? '') : d.weight}
+                            value={
+                              saved
+                                ? s.weight == null
+                                  ? ''
+                                  : displayWeight(s.weight, unit)
+                                : d.weight
+                            }
+                            onFocus={(event) => event.currentTarget.select()}
                             onChange={(event) =>
                               edit(s, e, { weight: event.target.value })
                             }
                           />
                         </label>
                       )}
+                      <label>
+                        <span className="sr-only">Reps</span>
+                        <input
+                          aria-label={`${exercise?.name ?? 'Exercise'} set ${s.set_number + 1} reps`}
+                          type="text"
+                          inputMode="numeric"
+                          disabled={saved || busy || !active}
+                          value={saved ? (s.reps ?? '') : d.reps}
+                          onFocus={(event) => event.currentTarget.select()}
+                          onChange={(event) =>
+                            edit(s, e, { reps: event.target.value })
+                          }
+                          onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                              event.preventDefault()
+                              void log(s, e, bodyweight)
+                            }
+                          }}
+                        />
+                      </label>
                       <button
-                        disabled={saved || busy || !active || finishing}
-                        onClick={() => void log(s, e, bodyweight)}
+                        className="set-complete"
+                        aria-label={
+                          saved
+                            ? `Reopen set ${s.set_number + 1}`
+                            : `${errors[s.id] ? 'Retry' : 'Complete'} set ${s.set_number + 1}`
+                        }
+                        aria-pressed={saved}
+                        disabled={busy || !active || finishing}
+                        onClick={() =>
+                          saved ? void unlog(s, e) : void log(s, e, bodyweight)
+                        }
                       >
-                        {saved
-                          ? 'Saved'
-                          : busy
-                            ? 'Saving...'
-                            : errors[s.id]
-                              ? 'Retry'
-                              : 'Done'}
+                        {saved ? (
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="m6 12 4 4 8-9" />
+                          </svg>
+                        ) : busy ? (
+                          <span className="saving-dot" aria-hidden="true" />
+                        ) : (
+                          <span aria-hidden="true" />
+                        )}
                       </button>
                     </div>
                     {!saved &&
@@ -434,26 +620,25 @@ export function SessionPage() {
                       e.auto_increment_enabled &&
                       !bodyweight &&
                       s.set_type !== 'warmup' && (
-                        <label className="override-control">
-                          If changing the suggested weight
-                          <select
-                            disabled={busy}
-                            value={d.scope}
-                            onChange={(event) =>
-                              edit(s, e, {
-                                scope: event.target.value as Draft['scope'],
-                              })
-                            }
+                        <fieldset className="override-control">
+                          <legend>Changed the suggested weight?</legend>
+                          <button
+                            type="button"
+                            className={d.scope === 'once' ? 'active' : ''}
+                            aria-pressed={d.scope === 'once'}
+                            onClick={() => edit(s, e, { scope: 'once' })}
                           >
-                            <option value="">
-                              Use suggestion / first weight
-                            </option>
-                            <option value="once">
-                              Next set only (this set)
-                            </option>
-                            <option value="permanent">Use going forward</option>
-                          </select>
-                        </label>
+                            This set
+                          </button>
+                          <button
+                            type="button"
+                            className={d.scope === 'permanent' ? 'active' : ''}
+                            aria-pressed={d.scope === 'permanent'}
+                            onClick={() => edit(s, e, { scope: 'permanent' })}
+                          >
+                            Going forward
+                          </button>
+                        </fieldset>
                       )}
                     <div className="set-feedback">
                       {errors[s.id] ? (
@@ -481,7 +666,7 @@ export function SessionPage() {
                 disabled={pending.includes(e.id) || finishing}
                 onClick={() => void add(e)}
               >
-                Add set
+                + Add set
               </button>
             )}
             {errors[e.id] && <p role="alert">{errors[e.id]}</p>}
@@ -510,6 +695,21 @@ export function SessionPage() {
           {finishError}
         </p>
       )}
+      <ConfirmationDialog
+        open={confirmingFinish}
+        title={`${incomplete} incomplete ${incomplete === 1 ? 'set' : 'sets'}`}
+        confirmLabel="Finish anyway"
+        onCancel={() => setConfirmingFinish(false)}
+        onConfirm={() => {
+          setConfirmingFinish(false)
+          void finish(false, true)
+        }}
+      >
+        <p>
+          Completed sets will be saved exactly as logged. Incomplete sets will
+          not be counted as performed.
+        </p>
+      </ConfirmationDialog>
     </>
   )
 }
