@@ -2,7 +2,7 @@
 
 LiftIt is a mobile-first workout tracker with simple, explainable weight progression. The workout tracker is the complete v1 focus; calorie tracking, social features, a native application, and an AI assistant are deferred.
 
-The repository includes email-link sign-in, session restoration, a private home page, and sign-out. The initial profile migration is ready to apply to a dedicated Supabase project. Workout features are next.
+The repository includes email-link sign-in, session restoration, sign-out, and a private home page for creating and renaming saved workout templates. Profile and workout-template migrations are applied to the development Supabase project. Exercise selection and live workout logging follow next.
 
 Follow [account setup and verification](docs/account-setup.md) to connect Supabase, apply the migration, and test real email links.
 

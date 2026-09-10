@@ -46,3 +46,23 @@
   sign-ups are enabled, with email confirmation required.
 - Verified the connected local app displays the sign-in form. Real email-link
   acceptance and session refresh checks are awaiting the user's first sign-in.
+
+## 2026-09-09: Saved workout names (issue #4)
+
+- The user confirmed the real email-link sign-in worked. Independent browser
+  refresh verification remains pending access to that signed-in browser session.
+- Recorded LiftIt-branded authentication emails for before public release in #3.
+- Confirmed a small built-in exercise library will follow saved workout names.
+- Replaced the private welcome placeholder with a saved workout list, create form,
+  and rename forms. Added explicit loading, empty, error, retry, and saving states.
+- Kept one UUID per create draft across retries and used a single-row upsert to
+  avoid duplicate templates when a successful response is lost. Documented in ADR 0003.
+- Applied the workout_templates migration to hosted Supabase with owner-based RLS,
+  name constraints, owner/date indexing, and no client delete permission.
+- Local and hosted SQL assertions passed for create, retry without duplication,
+  rename, name validation, ownership-transfer denial, cross-user read/write/upsert
+  isolation, and anonymous/client-delete privileges. Test data was rolled back.
+- The full check passed with 25 UI tests plus lint, formatting, TypeScript, and
+  production build. No new application dependencies were introduced.
+- Full signed-in browser verification of the new template forms remains pending;
+  available in-app sessions are signed out and Safari automation permission is absent.

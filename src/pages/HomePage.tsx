@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../auth/auth-context.ts'
+import { WorkoutTemplates } from '../workouts/WorkoutTemplates.tsx'
 
 export function HomePage() {
   const { client, state } = useAuth()
@@ -27,15 +28,22 @@ export function HomePage() {
 
   return (
     <main className="page-shell">
-      <section className="welcome-card auth-card" aria-labelledby="home-title">
+      <section
+        className="welcome-card dashboard-card"
+        aria-labelledby="home-title"
+      >
         <p className="eyebrow">LiftIt</p>
         <h1 id="home-title">Welcome to LiftIt</h1>
         <p className="intro account-email">
           Signed in as {state.session.user.email}
         </p>
-        <p className="intro">
-          Your account is ready. Workout tracking is coming next.
-        </p>
+        {client && (
+          <WorkoutTemplates
+            key={state.session.user.id}
+            client={client}
+            userId={state.session.user.id}
+          />
+        )}
         <button
           className="sign-out"
           onClick={() => void signOut()}
