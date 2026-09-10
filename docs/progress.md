@@ -66,3 +66,124 @@
   production build. No new application dependencies were introduced.
 - Full signed-in browser verification of the new template forms remains pending;
   available in-app sessions are signed out and Safari automation permission is absent.
+
+## 2026-09-09: Curated exercise library
+
+- Added 73 system exercises across chest, shoulders, triceps, biceps, legs, and
+  back, including explicit selectorized, plate-loaded, grip, and weighted
+  bodyweight variants where they affect logging.
+- Added primary and secondary muscle targets, equipment labels, weighted-option
+  metadata, and three concise performance steps for every exercise.
+- Selected and copied 73 demonstration images from the public-domain Free
+  Exercise DB. Images are served locally, lazy loaded in stable 3:2 containers,
+  and have text fallbacks and useful alternative text.
+- Added a mobile-first inline picker with search across names, muscles, and
+  equipment; broad muscle filters; expandable instructions; and confirmed add
+  and remove actions.
+- Loaded workouts, the exercise library, and all template selections in parallel
+  rather than issuing one selection request per workout.
+- Added read-back reconciliation after uncertain add or remove responses so the
+  interface reflects confirmed database state without duplicating exercises.
+- Added the `exercises` and `workout_template_exercises` migration with stable
+  IDs, ownership constraints, RLS, read-only system rows, insertion order, and
+  future rest and progression setting columns. The migration is not yet applied
+  to the hosted development project.
+- Added SQL isolation assertions and UI/unit coverage for loading, filtering,
+  instructions, weighted options, confirmed saves, and recoverable failures.
+- Verified the picker visually at a true 375px viewport and at 1200px. Both had
+  no horizontal page overflow; the desktop picker used three columns and browser
+  logs contained no errors or warnings.
+
+## 2026-09-09: Password and workout flow implementation started
+
+- Accepted password authentication, optional measurements, distinct weekly gym days,
+  both themes, complete sessions and follow-on equipment previews.
+- Updated design before implementation; added ADRs 0005 and 0006.
+- Preserved existing uncommitted exercise-library work on a new feature branch.
+- GitHub CLI authentication failed; remote issue and PR operations are pending.
+
+## 2026-09-09: Password and workout flow implemented (issue #6)
+
+- Implemented password registration, verification resend, login and recovery.
+  Recovery routing precedes profile redirects; existing account IDs remain intact.
+- Added atomic onboarding and weight history, profile editing, and device-local
+  System/Light/Dark themes with flat surfaces and compact responsive navigation.
+- Added dedicated template routes, ordered exercises, planned sets and explicit
+  optional targets. Drafts survive save errors and warn before navigation.
+- Added transactional session snapshots, one active session per user, completed
+  set persistence, idempotent retries, local recovery drafts, timestamp rest timers,
+  finish/abandon, and equipment-specific trusted progression.
+- Added distinct local gym days, exact goal encouragement, recent sessions and
+  12-week exercise records with accessible tables. Reps-only and added-weight
+  bodyweight modes have separate snapshot/comparison keys.
+- Added custom equipment increments/lists, a user-confirmed Matrix main-plate
+  preset, and a Life Fitness reference without inventing unverified stack labels.
+  Six original generic models rotate through an accessible slider. The optional
+  2.68 kB viewer loads on request and has a stable static fallback.
+- Applied migrations 002 and 003 manually to the hosted development project.
+  The first 003 attempt accidentally included the preceding library script;
+  that transaction rolled back. The exact corrected 003 then succeeded.
+- Hosted complete_workout_flow.sql passed with rolled-back synthetic accounts:
+  onboarding retries, session/template snapshots, cross-user denial, progression
+  at 5/6/10/11 reps, warmup/failure/override handling, bodyweight mode separation,
+  and duplicate same-day attendance. No test account or health entry remains.
+- Confirmed hosted Email signup and verification are enabled, minimum password
+  length is 12, and exact localhost callback/update-password redirects are saved.
+- Browser checks covered login/register, both themes, home, editor, saved sets,
+  profile and optional preview at mobile/desktop widths using explicitly labelled
+  synthetic fixtures for private pages. Preview loading and loaded states fit
+  375px without page overflow or console errors. These are not real-auth tests.
+- npm run check passes: 76 unit/component tests, four local SQL suites, lint,
+  formatting, TypeScript and production build. PGlite is a dev-only dependency.
+- Measured initial JS decreased from 551.79 kB to 514.64 kB (149.74 kB gzip) with
+  route splitting. Vite still reports its 500 kB chunk warning; no Lighthouse or
+  real-device performance score is claimed.
+- GitHub access works after the earlier environment restriction; issue #6 tracks
+  delivery. The implementation is integrated on codex/password-workout-flow,
+  stacked on the existing saved-workout branch, rather than five independent
+  milestones because routes and the transactional schema are shared.
+- Release gates remain: real registration/verification/recovery with an allowed
+  email, full real-auth journey, production domain and SMTP credentials, exact
+  production redirects, and public release checks. Issue #3 covers branded email.
+  No production deployment or PR merge has been performed.
+
+## 2026-09-10: Workout experience redesign
+
+- Documented canonical kilogram storage with a profile-level kg/lb display
+  preference and shared conversion boundary.
+- Reworked live logging around direct editable cells, separate rep and weight
+  validation, keyboard completion, clear planned/entered/completed states and
+  copied values for newly added sets.
+- Replaced the browser confirmation for incomplete workouts with an accessible
+  count-aware dialog and allowed intentionally completed zero-set sessions while
+  keeping incomplete rows out of progress data.
+- Refined routine construction, LiftIt branding, authentication, dashboard
+  hierarchy and mobile controls while retaining the existing green palette.
+- Added a purpose-built strength-training authentication image and kept imagery
+  outside the active workout path.
+
+## 2026-09-10: Reversible set completion
+
+- Made the completed set control reversible while a workout is active.
+- Kept immediate Supabase persistence instead of batching the full workout, so
+  refreshes, locked phones and connection loss do not discard confirmed sets.
+- Added a transaction that clears a reopened set and reconstructs its equipment
+  progression from the latest remaining applicable set.
+- Restored reopened reps and weight to the local recovery draft for correction,
+  with an explicit retry state when the undo cannot be confirmed.
+
+## 2026-09-10: SEO, form security and delivery audit
+
+- Audited the application against the supplied SEO, JavaScript delivery and form
+  security guides and recorded the private-app indexing decision in ADR 0009.
+- Added route-specific titles and descriptions while blocking indexing until a
+  useful public page and confirmed production origin exist.
+- Added restrictive Vercel browser security headers, immutable hashed-asset
+  caching and compressed the authentication image from 278 KB JPEG to 102 KB WebP.
+- Added bounded email, new-password and profile validation before submission.
+  Existing database constraints, authenticated functions and Row Level Security
+  continue to revalidate trusted writes without adding a client sanitizer.
+- Kept private routes lazy-loaded and split React and Supabase into stable vendor
+  chunks. See `docs/performance.md` for measured production bundle sizes.
+- Recorded the complete control and release checklist in
+  `docs/web-quality-audit.md`.

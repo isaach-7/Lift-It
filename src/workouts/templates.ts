@@ -57,3 +57,31 @@ export async function saveWorkoutTemplate(
   if (!data) throw new Error('No saved workout was returned')
   return data
 }
+
+export type WorkoutSummary = WorkoutTemplate & { ready: boolean }
+export async function listWorkoutSummaries(
+  client: SupabaseClient,
+  userId: string,
+): Promise<WorkoutSummary[]> {
+  const { data, error } = await client
+    .from('workout_templates')
+    .select(
+      'id,name,created_at,workout_template_exercises(exercise_id,workout_template_sets(id))',
+    )
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1, {
+      referencedTable: 'workout_template_exercises.workout_template_sets',
+    })
+  if (error) throw error
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    name: row.name,
+    created_at: row.created_at,
+    ready:
+      row.workout_template_exercises.length > 0 &&
+      row.workout_template_exercises.every(
+        (e) => e.workout_template_sets.length > 0,
+      ),
+  }))
+}

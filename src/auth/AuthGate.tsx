@@ -8,7 +8,8 @@ export function AuthGate({ children }: { children: ReactNode }) {
   const { pathname } = useLocation()
   if (state.status === 'ready') return children
 
-  const callback = pathname === '/auth/callback'
+  const callback =
+    pathname === '/auth/callback' || pathname === '/update-password'
   return (
     <main className="page-shell">
       <section className="welcome-card auth-card" aria-labelledby="auth-title">
@@ -38,10 +39,13 @@ export function AuthGate({ children }: { children: ReactNode }) {
             </h1>
             <p className="feedback error" role="alert">
               {callback
-                ? 'This sign-in link may have expired or already been used. Request a new link, or try again if your connection failed.'
+                ? 'This verification or recovery link may have expired or already been used. Request a new link, or try again if your connection failed.'
                 : 'We could not check your session. Check your connection and try again.'}
             </p>
-            <a className="text-link" href={callback ? '/login' : pathname}>
+            <a
+              className="text-link"
+              href={callback ? '/forgot-password' : pathname}
+            >
               {callback ? 'Request a new link' : 'Try again'}
             </a>
           </>
