@@ -1,5 +1,6 @@
 import { lazy } from 'react'
 import { Outlet, useParams } from 'react-router-dom'
+import { Analytics } from '@vercel/analytics/react'
 import { AuthGate } from './auth/AuthGate.tsx'
 import { AuthProvider } from './auth/AuthProvider.tsx'
 import { ProfileProvider } from './profile/ProfileProvider.tsx'
@@ -32,6 +33,7 @@ export function Root() {
       <AuthGate>
         <Outlet />
       </AuthGate>
+      <Analytics />
     </AuthProvider>
   )
 }
