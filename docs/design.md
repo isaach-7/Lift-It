@@ -191,6 +191,25 @@ not accepted or injected, so a client HTML-sanitizer dependency is unnecessary.
 There is no custom cross-origin API route in v1; database access uses the Supabase
 client, Row Level Security and narrowly granted functions.
 
+## Public alpha delivery
+
+The first hosted release is a link-accessible public alpha on Vercel. It uses the
+generated HTTPS production address, remains intentionally excluded from search,
+and is initially supported only for the project owner's existing account. A
+custom domain and external-user email delivery do not block this alpha.
+
+The existing hosted Supabase project becomes the alpha production database so
+the owner's account and workout history remain intact. Before deployment, all
+seven repository migrations and all hosted rollback-only SQL suites must be
+verified. The browser receives only the Supabase project URL and publishable key;
+local environment files and privileged keys remain outside version control.
+
+Vercel preview and production deployments use the same validated source revision.
+Supabase keeps exact localhost, preview and production callback and password-reset
+paths. The default Supabase email sender is acceptable only for the authorized
+owner account. A custom SMTP sender, custom domain, separate development Supabase
+project and external-user support are gates for the later private beta.
+
 ## Verification approach
 
 Pure business rules receive unit tests, including rep-range boundary cases and warmup exclusions. Components receive interaction and state tests for important behavior. Integration tests will cover Supabase boundaries with controlled test data. The completed core journey will receive browser-level tests before release. Performance work follows measurement with browser tools and is recorded in `docs/performance.md` once meaningful screens exist.

@@ -187,3 +187,17 @@
   chunks. See `docs/performance.md` for measured production bundle sizes.
 - Recorded the complete control and release checklist in
   `docs/web-quality-audit.md`.
+
+## 2026-09-10: Public alpha preparation started (issue #8)
+
+- Merged the completed password-account and workout flow through pull request #7
+  after its full repository check and GitHub Actions verification passed.
+- Closed the completed workout-flow issue and the superseded email-link account
+  issue with references to the merged implementation.
+- Selected a link-accessible, intentionally unindexed Vercel release as the first
+  public alpha, initially supported only for the owner's authorized account.
+- Kept the existing hosted Supabase project and its real account data as the alpha
+  production database. A separate development project, custom domain and custom
+  SMTP remain gates for inviting external beta users.
+- Corrected the setup guide to include all seven migrations and the current 106
+  frontend tests and five local SQL suites.

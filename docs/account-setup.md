@@ -42,17 +42,22 @@ Apply historical files once, in timestamp order:
 2. `20260909000100_create_workout_templates.sql`
 3. `20260909000200_create_exercise_library.sql`
 4. `20260909000300_complete_workout_flow.sql`
+5. `20260910000100_add_weight_unit_preference.sql`
+6. `20260910000200_allow_partial_workout_completion.sql`
+7. `20260910000300_allow_set_reopening.sql`
 
 Check hosted status before applying. The project originally used manual SQL
 Editor migrations; reconcile these exact versions with CLI migration history
 before adopting `supabase db push`. Never replay an already applied migration.
 Migration 003 preserves account IDs and existing templates and adds transactional
-profile, template, session, set and progression operations. Existing users complete
-onboarding; name-only templates remain editable drafts.
+profile, template, session, set and progression operations. The later migrations
+add the kg/lb display preference, intentional partial completion and reversible
+set completion. Existing users complete onboarding; name-only templates remain
+editable drafts.
 
 ## Verification
 
-`npm run check` runs lint, formatting, 76 unit/component tests, four SQL suites and
+`npm run check` runs lint, formatting, 106 unit/component tests, five SQL suites and
 a production build. The SQL harness uses PGlite with auth roles and Supabase-like
 default table grants. Also run the SQL files under `supabase/tests/` against the
 hosted project as postgres. Each creates synthetic records in a transaction and
