@@ -201,3 +201,9 @@
   SMTP remain gates for inviting external beta users.
 - Corrected the setup guide to include all seven migrations and the current 106
   frontend tests and five local SQL suites.
+- Verified the hosted Supabase schema includes the seven repository migrations,
+  including weight-unit preferences, partial workout completion and reopening a
+  completed set.
+- Ran all five hosted SQL suites inside rollback-only transactions. Each suite
+  passed, and a follow-up check confirmed that no synthetic `example.invalid`
+  accounts remained in the hosted project.
