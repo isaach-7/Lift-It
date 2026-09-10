@@ -123,11 +123,73 @@ Data-driven screens explicitly support loading, loaded, empty, and error states.
 
 Workout inputs update local state immediately and do not write on every keystroke. Completing a set begins persistence without freezing unrelated controls. Failed writes retain the entered value where practical and offer a retry path. A future offline synchronization system is outside v1.
 
+Completed set controls are reversible while a workout remains active. Reopening a
+set clears its performed values transactionally in Supabase, restores those values
+to the local editable draft, and recomputes the equipment-specific progression
+from the latest remaining completed set. A failed or unconfirmed undo keeps the
+row visibly completed instead of implying that the database changed.
+
 Exercise media uses stable aspect-ratio containers, responsive sizing, lazy loading below the fold, and useful alternative text. Timers and numeric columns use stable widths and tabular numbers where appropriate. Motion is subtle, primarily uses transform and opacity, and respects reduced-motion preferences.
+
+## Workout experience redesign
+
+Live set rows use direct weight and rep entry rather than numeric pickers. Input
+state remains text while a user edits so empty values and decimal intermediates
+such as `82.` are valid editing states. Reps are validated separately as whole
+numbers when a set is completed. Weight is validated as a non-negative decimal
+at the same intentional save point. Completing a set is the only action that
+persists its performance values.
+
+Workout weight is stored canonically in kilograms. Profiles store a preferred
+display unit of `kg` or `lb`; the logger, routine editor, progress summaries and
+body-weight history convert only at their display and input boundaries. Unit
+changes never rewrite stored set or history values. One shared conversion module
+owns the conversion constant, parsing and display rounding.
+
+Planned, entered and completed set states remain distinct. Finishing with every
+set complete needs no warning. Finishing with incomplete rows opens an accessible
+confirmation dialog that reports the remaining count. Confirming completes the
+session even when no set was performed; incomplete rows retain null performance
+values and are excluded from exercise progress calculations. An unresolved set
+save still blocks completion because persistence has not been confirmed.
+
+The active workout is a compact training log: weight precedes reps for fast
+keyboard entry, Enter on reps completes the row, completion is a large touch
+target, and a newly added set copies the preceding row's useful values locally.
+The session elapsed clock is isolated from the exercise list so its one-second
+updates do not rerender the logger.
+
+Authentication uses a responsive split composition with one strength-training
+image on desktop and a compact branded treatment on small screens. The active
+workout remains image-free. LiftIt uses a small progression mark beside the
+wordmark in navigation, authentication and the favicon.
 
 ## Scope boundaries
 
 The calorie tracker, barcode scanning, social features, React Native application, advertising, and AI assistant are not part of workout-tracker v1. Analytics and other optional third-party tools will be considered only after the core workflow is reliable.
+
+## Search, security and delivery
+
+LiftIt v1 is an authenticated application without a public content or marketing
+page. All routes therefore send `noindex, nofollow`, and `robots.txt` blocks
+crawling until a useful public landing page and production canonical origin
+exist. Page titles and descriptions still follow the active route for clear
+browser history and future public-page reuse. A sitemap, canonical URLs,
+structured data, Search Console and analytics are release work for public pages;
+the app does not publish guessed URLs or load optional tracking scripts early.
+
+Vercel sends a restrictive Content Security Policy and standard browser security
+headers. The policy permits same-origin assets and only Supabase HTTPS and WebSocket
+connections. Hashed build assets receive immutable caching. Authentication media
+uses explicit dimensions and a compressed WebP source.
+
+Forms validate bounded, typed values in the browser before submission and retain
+entries after recoverable errors. Supabase Auth validates account operations, and
+Postgres constraints plus authenticated functions validate workout and profile
+writes at the trusted boundary. React renders user strings as text; rich HTML is
+not accepted or injected, so a client HTML-sanitizer dependency is unnecessary.
+There is no custom cross-origin API route in v1; database access uses the Supabase
+client, Row Level Security and narrowly granted functions.
 
 ## Verification approach
 

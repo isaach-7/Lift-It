@@ -146,3 +146,44 @@
   email, full real-auth journey, production domain and SMTP credentials, exact
   production redirects, and public release checks. Issue #3 covers branded email.
   No production deployment or PR merge has been performed.
+
+## 2026-09-10: Workout experience redesign
+
+- Documented canonical kilogram storage with a profile-level kg/lb display
+  preference and shared conversion boundary.
+- Reworked live logging around direct editable cells, separate rep and weight
+  validation, keyboard completion, clear planned/entered/completed states and
+  copied values for newly added sets.
+- Replaced the browser confirmation for incomplete workouts with an accessible
+  count-aware dialog and allowed intentionally completed zero-set sessions while
+  keeping incomplete rows out of progress data.
+- Refined routine construction, LiftIt branding, authentication, dashboard
+  hierarchy and mobile controls while retaining the existing green palette.
+- Added a purpose-built strength-training authentication image and kept imagery
+  outside the active workout path.
+
+## 2026-09-10: Reversible set completion
+
+- Made the completed set control reversible while a workout is active.
+- Kept immediate Supabase persistence instead of batching the full workout, so
+  refreshes, locked phones and connection loss do not discard confirmed sets.
+- Added a transaction that clears a reopened set and reconstructs its equipment
+  progression from the latest remaining applicable set.
+- Restored reopened reps and weight to the local recovery draft for correction,
+  with an explicit retry state when the undo cannot be confirmed.
+
+## 2026-09-10: SEO, form security and delivery audit
+
+- Audited the application against the supplied SEO, JavaScript delivery and form
+  security guides and recorded the private-app indexing decision in ADR 0009.
+- Added route-specific titles and descriptions while blocking indexing until a
+  useful public page and confirmed production origin exist.
+- Added restrictive Vercel browser security headers, immutable hashed-asset
+  caching and compressed the authentication image from 278 KB JPEG to 102 KB WebP.
+- Added bounded email, new-password and profile validation before submission.
+  Existing database constraints, authenticated functions and Row Level Security
+  continue to revalidate trusted writes without adding a client sanitizer.
+- Kept private routes lazy-loaded and split React and Supabase into stable vendor
+  chunks. See `docs/performance.md` for measured production bundle sizes.
+- Recorded the complete control and release checklist in
+  `docs/web-quality-audit.md`.
