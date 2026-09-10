@@ -121,6 +121,11 @@ Exact SQL types, constraints, indexes, and Row Level Security policies will be s
 
 Data-driven screens explicitly support loading, loaded, empty, and error states. Skeletons reserve roughly the same dimensions as final content. Authentication has an intentional checking state so signed-in users do not see the login page flash.
 
+An authenticated profile save that receives an unauthorized response may restore
+the in-memory session once and retry the same idempotent request. A second
+unauthorized response is shown as an expired sign-in instead of a generic save
+failure. The form keeps its entered values throughout the retry.
+
 Workout inputs update local state immediately and do not write on every keystroke. Completing a set begins persistence without freezing unrelated controls. Failed writes retain the entered value where practical and offer a retry path. A future offline synchronization system is outside v1.
 
 Completed set controls are reversible while a workout remains active. Reopening a
