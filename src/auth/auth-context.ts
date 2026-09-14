@@ -10,6 +10,8 @@ export type AuthState =
 export const AuthContext = createContext<{
   state: AuthState
   client: SupabaseClient | null
+  passwordRecoveryUserId: string | null
+  completePasswordRecovery: () => void
 } | null>(null)
 
 export function useAuth() {

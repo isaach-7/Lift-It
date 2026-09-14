@@ -21,6 +21,8 @@ vi.mock('./profile/profile.ts', () => ({
     height_cm: null,
     preferred_weight_unit: 'kg',
     onboarding_completed_at: '2026-09-09',
+    fitness_data_consent_at: '2026-09-14',
+    privacy_notice_version: '2026-09-14',
   }),
 }))
 vi.mock('./pages/HomePage.tsx', () => ({ HomePage: () => <h1>Hi, Alex!</h1> }))
@@ -63,7 +65,7 @@ const session = {
   },
 } satisfies Session
 
-function renderApp(path = '/') {
+function renderApp(path = '/app') {
   return render(
     <StrictMode>
       <RouterProvider
@@ -73,10 +75,11 @@ function renderApp(path = '/') {
   )
 }
 
-function emitSession(value: Session | null) {
-  mocks.listeners.forEach((listener) =>
-    listener(value ? 'SIGNED_IN' : 'SIGNED_OUT', value),
-  )
+function emitSession(
+  value: Session | null,
+  event = value ? 'SIGNED_IN' : 'SIGNED_OUT',
+) {
+  mocks.listeners.forEach((listener) => listener(event, value))
 }
 
 beforeEach(() => {
@@ -88,6 +91,8 @@ beforeEach(() => {
     height_cm: null,
     preferred_weight_unit: 'kg',
     onboarding_completed_at: '2026-09-09',
+    fitness_data_consent_at: '2026-09-14',
+    privacy_notice_version: '2026-09-14',
   })
   vi.mocked(listWorkoutTemplates).mockResolvedValue([])
   vi.mocked(listExercises).mockResolvedValue([])
@@ -130,10 +135,60 @@ beforeEach(() => {
 })
 
 describe('account foundation', () => {
+  it('keeps the public landing page available while auth initializes', () => {
+    mocks.initialize.mockReturnValue(new Promise(() => undefined))
+    renderApp('/')
+    expect(
+      screen.getByRole('heading', {
+        name: 'Train with intent. Track the work. See the progress.',
+      }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getAllByRole('link', { name: 'Create account' }),
+    ).not.toHaveLength(0)
+    expect(screen.getAllByRole('link', { name: 'Sign in' })).not.toHaveLength(0)
+  })
+
+  it('keeps the privacy notice available without Supabase configuration', () => {
+    mocks.getClient.mockImplementation(() => {
+      throw new Error('Missing configuration')
+    })
+    renderApp('/privacy')
+    expect(
+      screen.getByRole('heading', {
+        name: 'How LiftIt handles your information.',
+      }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(/does not sell personal information/i),
+    ).toBeInTheDocument()
+  })
+
+  it('marks the public landing as canonical and indexable', async () => {
+    renderApp('/')
+    expect(document.querySelector('meta[name="robots"]')).toHaveAttribute(
+      'content',
+      'index, follow',
+    )
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      'href',
+      'https://www.lift-it.site/',
+    )
+    expect(document.querySelector('meta[property="og:url"]')).toHaveAttribute(
+      'content',
+      'https://www.lift-it.site/',
+    )
+  })
+
   it('sets useful route metadata while keeping private pages out of search', async () => {
     renderApp('/register')
     await screen.findByLabelText('Email address')
     expect(document.title).toBe('Create account | LiftIt')
+    expect(document.querySelector('meta[name="robots"]')).toHaveAttribute(
+      'content',
+      'noindex, follow',
+    )
+    expect(document.querySelector('link[rel="canonical"]')).toBeNull()
   })
 
   it('keeps private content and the login form hidden while checking', async () => {
@@ -143,7 +198,7 @@ describe('account foundation', () => {
         finish = resolve
       }),
     )
-    renderApp()
+    renderApp('/app')
     expect(screen.getByRole('status')).toHaveTextContent(
       'Checking your session',
     )
@@ -284,8 +339,12 @@ describe('account foundation', () => {
     )
   })
 
-  it('keeps an authenticated recovery session on the password update form', async () => {
+  it('allows password updates only after a recovery auth event', async () => {
     mocks.getSession.mockResolvedValue({ data: { session }, error: null })
+    mocks.initialize.mockImplementationOnce(async () => {
+      emitSession(session, 'PASSWORD_RECOVERY')
+      return { error: null }
+    })
     mocks.updateUser.mockResolvedValue({ error: null })
     const user = userEvent.setup()
     renderApp('/update-password')
@@ -299,7 +358,19 @@ describe('account foundation', () => {
     expect(await screen.findByText('Hi, Alex!')).toBeInTheDocument()
   })
 
-  it.each(['/', '/login', '/auth/callback'])(
+  it('rejects the update route for a normally authenticated session', async () => {
+    mocks.getSession.mockResolvedValue({ data: { session }, error: null })
+    renderApp('/update-password')
+    expect(
+      await screen.findByText(
+        'This recovery link is missing, invalid, or expired.',
+      ),
+    ).toBeInTheDocument()
+    expect(screen.queryByLabelText('Password')).not.toBeInTheDocument()
+    expect(mocks.updateUser).not.toHaveBeenCalled()
+  })
+
+  it.each(['/app', '/login', '/auth/callback'])(
     'restores a session at %s',
     async (path) => {
       mocks.getSession.mockResolvedValue({ data: { session }, error: null })
@@ -310,7 +381,7 @@ describe('account foundation', () => {
   )
 
   it('updates the private page when auth changes in another tab', async () => {
-    renderApp()
+    renderApp('/app')
     await screen.findByLabelText('Email address')
     act(() => emitSession(session))
     expect(await screen.findByText(/Hi, Alex!/)).toBeInTheDocument()
@@ -325,7 +396,7 @@ describe('account foundation', () => {
         finish = resolve
       }),
     )
-    renderApp()
+    renderApp('/app')
     await waitFor(() => expect(mocks.getSession).toHaveBeenCalled())
     act(() => emitSession(null))
     await act(async () => finish({ data: { session }, error: null }))
@@ -335,7 +406,7 @@ describe('account foundation', () => {
   it('signs out locally and returns to login', async () => {
     mocks.getSession.mockResolvedValue({ data: { session }, error: null })
     const user = userEvent.setup()
-    renderApp()
+    renderApp('/app')
     await user.click(await screen.findByRole('button', { name: 'Sign out' }))
     expect(mocks.signOut).toHaveBeenCalledWith({ scope: 'local' })
     expect(await screen.findByLabelText('Email address')).toBeInTheDocument()
@@ -345,7 +416,7 @@ describe('account foundation', () => {
     mocks.getSession.mockResolvedValue({ data: { session }, error: null })
     mocks.signOut.mockResolvedValueOnce({ error: new Error('Network') })
     const user = userEvent.setup()
-    renderApp()
+    renderApp('/app')
     await user.click(await screen.findByRole('button', { name: 'Sign out' }))
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Unable to sign out',
@@ -383,7 +454,7 @@ describe('account foundation', () => {
     )
     expect(screen.getByRole('link', { name: 'Try again' })).toHaveAttribute(
       'href',
-      '/',
+      '/app',
     )
   })
 
@@ -391,7 +462,7 @@ describe('account foundation', () => {
     mocks.getClient.mockImplementation(() => {
       throw new Error('Missing configuration')
     })
-    renderApp()
+    renderApp('/app')
     expect(
       screen.getByRole('heading', { name: 'Connect LiftIt' }),
     ).toBeInTheDocument()
@@ -399,7 +470,7 @@ describe('account foundation', () => {
   })
 
   it('unsubscribes from auth events on unmount', async () => {
-    const view = renderApp()
+    const view = renderApp('/app')
     await screen.findByLabelText('Email address')
     view.unmount()
     expect(mocks.listeners.size).toBe(0)

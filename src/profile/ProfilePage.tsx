@@ -25,6 +25,7 @@ export function ProfilePage({ onboarding = false }: { onboarding?: boolean }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [saved, setSaved] = useState(false)
+  const [consent, setConsent] = useState(false)
   const [history, setHistory] = useState<
     { id: string; weight_kg: number; logged_at: string }[] | null
   >(null)
@@ -66,6 +67,13 @@ export function ProfilePage({ onboarding = false }: { onboarding?: boolean }) {
       setBusy(false)
       return
     }
+    if (onboarding && !consent) {
+      setError(
+        'Confirm that you are at least 16 and explicitly consent before continuing.',
+      )
+      setBusy(false)
+      return
+    }
     try {
       const request = {
         p_name: name.trim(),
@@ -74,6 +82,7 @@ export function ProfilePage({ onboarding = false }: { onboarding?: boolean }) {
         p_weight: weightKg,
         p_weight_id: weightId,
         p_unit: unit,
+        p_consent: onboarding && consent,
       }
       let response = await client.rpc('save_profile', request)
       if (
@@ -180,6 +189,24 @@ export function ProfilePage({ onboarding = false }: { onboarding?: boolean }) {
               }}
             />
           </label>
+          {onboarding && (
+            <label className="consent-label">
+              <input
+                type="checkbox"
+                required
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+              />
+              <span>
+                I confirm I am at least 16, have read the{' '}
+                <a href="/privacy" target="_blank" rel="noreferrer">
+                  privacy notice
+                </a>
+                , and explicitly consent to LiftIt storing my workout and any
+                optional body information to provide the service.
+              </span>
+            </label>
+          )}
           <button disabled={busy}>
             {busy
               ? 'Saving...'

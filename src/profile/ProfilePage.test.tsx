@@ -18,6 +18,8 @@ function renderProfile() {
       value={{
         client: { rpc, auth: { setSession } } as unknown as SupabaseClient,
         state: { status: 'ready', session },
+        passwordRecoveryUserId: null,
+        completePasswordRecovery: vi.fn(),
       }}
     >
       <ProfileContext
@@ -29,6 +31,8 @@ function renderProfile() {
             weekly_goal: null,
             preferred_weight_unit: 'kg',
             onboarding_completed_at: null,
+            fitness_data_consent_at: null,
+            privacy_notice_version: null,
           },
           setProfile,
         }}
@@ -53,6 +57,8 @@ describe('onboarding', () => {
           height_cm: null,
           preferred_weight_unit: 'kg',
           onboarding_completed_at: '2026-09-09',
+          fitness_data_consent_at: '2026-09-14',
+          privacy_notice_version: '2026-09-14',
         },
       ],
       error: null,
@@ -60,6 +66,9 @@ describe('onboarding', () => {
     const user = userEvent.setup()
     renderProfile()
     await user.type(screen.getByLabelText('Preferred name'), 'Alex')
+    await user.click(
+      screen.getByRole('checkbox', { name: /explicitly consent/i }),
+    )
     await user.click(screen.getByRole('button', { name: 'Save and continue' }))
     await waitFor(() => expect(setProfile).toHaveBeenCalled())
     expect(rpc).toHaveBeenCalledWith(
@@ -69,8 +78,21 @@ describe('onboarding', () => {
         p_goal: 4,
         p_height: null,
         p_weight: null,
+        p_consent: true,
       }),
     )
+  })
+  it('keeps consent unticked and blocks onboarding until it is explicit', async () => {
+    const user = userEvent.setup()
+    renderProfile()
+    const consent = screen.getByRole('checkbox', {
+      name: /explicitly consent/i,
+    })
+    expect(consent).not.toBeChecked()
+    await user.type(screen.getByLabelText('Preferred name'), 'Alex')
+    await user.click(screen.getByRole('button', { name: 'Save and continue' }))
+    expect(consent).toBeInvalid()
+    expect(rpc).not.toHaveBeenCalled()
   })
   it('preserves measurements and the retry ID after failure', async () => {
     rpc.mockResolvedValue({ error: new Error('offline') })
@@ -78,6 +100,9 @@ describe('onboarding', () => {
     renderProfile()
     await user.type(screen.getByLabelText('Preferred name'), 'Alex')
     await user.type(screen.getByLabelText('Body weight (kg, optional)'), '80')
+    await user.click(
+      screen.getByRole('checkbox', { name: /explicitly consent/i }),
+    )
     await user.click(screen.getByRole('button', { name: 'Save and continue' }))
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'entries are still here',
@@ -96,6 +121,8 @@ describe('onboarding', () => {
       height_cm: null,
       preferred_weight_unit: 'kg',
       onboarding_completed_at: '2026-09-10',
+      fitness_data_consent_at: '2026-09-14',
+      privacy_notice_version: '2026-09-14',
     }
     rpc
       .mockResolvedValueOnce({
@@ -107,6 +134,9 @@ describe('onboarding', () => {
     const user = userEvent.setup()
     renderProfile()
     await user.type(screen.getByLabelText('Preferred name'), 'Alex')
+    await user.click(
+      screen.getByRole('checkbox', { name: /explicitly consent/i }),
+    )
     await user.click(screen.getByRole('button', { name: 'Save and continue' }))
     await waitFor(() => expect(setProfile).toHaveBeenCalledWith(savedProfile))
     expect(setSession).toHaveBeenCalledWith({

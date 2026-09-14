@@ -33,6 +33,7 @@ insert into auth.users (id, email) values
 
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-4000-8000-000000000031';
+select public.save_profile('Exercise tester A', 3, null, null, null, 'kg', true);
 
 insert into public.workout_templates (id, user_id, name) values
   ('00000000-0000-4000-8000-000000000041', auth.uid(), 'Push day');
@@ -83,6 +84,7 @@ do $$ begin
 end $$;
 
 set local request.jwt.claim.sub = '00000000-0000-4000-8000-000000000032';
+select public.save_profile('Exercise tester B', 3, null, null, null, 'kg', true);
 
 insert into public.workout_templates (id, user_id, name) values
   ('00000000-0000-4000-8000-000000000042', auth.uid(), 'Pull day');

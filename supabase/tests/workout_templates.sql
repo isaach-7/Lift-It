@@ -6,6 +6,10 @@ insert into auth.users (id, email) values
 
 set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-4000-8000-000000000011';
+select public.save_profile('Template tester A', 3, null, null, null, 'kg', true);
+set local request.jwt.claim.sub = '00000000-0000-4000-8000-000000000012';
+select public.save_profile('Template tester B', 3, null, null, null, 'kg', true);
+set local request.jwt.claim.sub = '00000000-0000-4000-8000-000000000011';
 insert into public.workout_templates (id, user_id, name) values
   ('00000000-0000-4000-8000-000000000021', auth.uid(), 'Push day');
 insert into public.workout_templates (id, user_id, name) values

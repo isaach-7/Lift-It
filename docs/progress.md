@@ -261,3 +261,117 @@
   confirmed the saved profile, completed workout, weekly attendance, recent
   history, and exercise-progress state remained available without console
   warnings or errors.
+
+## 2026-09-14: Searchable public beta defined (issue #11)
+
+- Accepted ADR 0011 with `https://www.lift-it.site` as the canonical origin, a
+  public landing page at `/` and the authenticated dashboard at `/app`.
+- Kept registration open for a UK-first audience aged 16 or over and retained
+  routines, live workout logging and progression as the complete beta scope.
+- Required an unticked onboarding acknowledgement before storing workout or body
+  information, with a public privacy notice and verified deletion requests sent
+  to `support@lift-it.site`.
+- Limited indexing to `/`, while keeping private, authentication, recovery,
+  privacy and unknown routes `noindex` without blocking their crawl access.
+- Assigned Vercel Production to the existing production Supabase project and
+  Vercel Preview to the separate LiftIt Development project before further
+  migrations are applied.
+- Retained Supabase-managed encryption, TLS, RLS and scoped RPC functions. Deferred
+  leaked-password detection to a paid plan and made an encrypted export or paid
+  backup a durability gate.
+
+## 2026-09-14: Preview database separated
+
+- Created the independent Ireland-region `LiftIt Development` Supabase project
+  before adding another migration.
+- Scoped Vercel Production browser configuration to the existing production
+  project and every Vercel Preview to `LiftIt Development`.
+- Stored the browser-visible project URL and publishable key as Vercel Config
+  values. No service-role key, database password or SMTP credential entered the
+  repository or Vite environment.
+- Kept local, generated production and active Preview auth redirects while the
+  two hosted projects receive the same reviewed migration history.
+
+## 2026-09-14: Obsolete profile function removed
+
+- Added a migration that revokes and drops only the superseded five-argument
+  `save_profile` overload while retaining the unit-aware SECURITY DEFINER RPC.
+- Updated the rollback-only SQL suites to use the current signature and assert
+  that the obsolete overload cannot be resolved.
+
+## 2026-09-14: Public landing, privacy and consent
+
+- Moved the signed-in dashboard to `/app` and made `/` a public landing page
+  using the existing strength-training image, with truthful descriptions of
+  routines, live set logging and explainable progression.
+- Added a public privacy notice covering collected information, purposes,
+  special-category consent, processors, retention, deletion, security, user
+  rights and the absence of data sales or advertising analytics.
+- Added an unticked age-and-explicit-consent acknowledgement to onboarding and
+  persisted its timestamp and privacy-notice version through one atomic profile
+  RPC.
+- Enforced consent in the database before body-measurement, routine, session,
+  set or progression writes, including attempts outside the browser client.
+- Updated callbacks, navigation, workout completion and signed-in redirects to
+  use `/app`, while leaving the landing and privacy pages available without an
+  initialized Supabase session.
+
+## 2026-09-14: Search metadata published
+
+- Removed the site-wide `noindex, nofollow` response header and made only `/`
+  indexable with the permanent `https://www.lift-it.site/` canonical URL.
+- Added route-aware robots, description, Open Graph and social-card metadata;
+  private, authentication, recovery, privacy and unknown routes remain
+  `noindex, follow`.
+- Published a crawlable `robots.txt` and a one-URL sitemap without blocking the
+  private routes whose `noindex` directive crawlers need to read.
+
+## 2026-09-14: Database durability and transport controls
+
+- Confirmed every observed non-SSL PostgreSQL connection was an internal
+  Supabase worker on loopback, then enabled direct database SSL enforcement in
+  development and production without changing browser API traffic.
+- Confirmed the free production project has no retained physical backup and
+  added a dependency-free encrypted export and verification procedure using
+  AES-256-GCM, scrypt and owner-only files.
+- Documented the seven expected callable SECURITY DEFINER warnings and the
+  plan-limited leaked-password warning, plus the ownership controls and rollback
+  suites that justify retaining the scoped functions.
+
+## 2026-09-14: Public beta verification
+
+- Ran `npm run check`: lint and formatting passed, all 112 frontend tests and all
+  five local rollback SQL suites passed, TypeScript compiled and the production
+  bundle built successfully.
+- Ran all five SQL suites against the development and production Supabase
+  projects inside rollback-only transactions. The production Auth user count was
+  unchanged, the obsolete profile RPC is unavailable and only the seven-argument
+  consent-aware `save_profile` signature remains.
+- Registered a new development account through the deployed Preview and observed
+  the customised confirmation, recovery and password-changed messages in Resend
+  from `Lift-It <no-reply@lift-it.site>`. Confirmation returned to the Preview
+  callback and recovery returned to the password-update route.
+- Confirmed consent begins unticked, blocks profile submission until accepted and
+  then permits the full journey: profile and optional body data, routine creation
+  and editing, live set logging, refresh and resume, completion, attendance,
+  history and progression. Deleting that verified disposable Auth user cascaded
+  through its application data without leaving profile, routine or session rows.
+- Confirmed a genuine recovery session can set a new password, while a normally
+  authenticated visit, a malformed link and a consumed link cannot display the
+  password form. The preview console remained free of warnings and errors.
+- Checked the landing page and application at mobile and desktop widths in both
+  themes with no horizontal overflow. The local Lighthouse baseline was 95/100/
+  100/100 on mobile and 100/100/100/100 on desktop for performance,
+  accessibility, best practices and SEO; cumulative layout shift and total
+  blocking time were zero in both runs.
+- Verified `/` has `index, follow`, the production canonical and Open Graph URL,
+  while `/app`, auth, recovery, privacy and unknown routes have `noindex, follow`
+  and no canonical. Confirmed the sitemap contains only the canonical homepage
+  and `robots.txt` does not block crawlers from reading private-route metadata.
+- Scanned tracked source and the production bundle for private keys, Supabase
+  secret keys, service-role markers and Resend keys; none were present. Only the
+  expected browser publishable configuration is bundled.
+- Re-ran the production Security Advisor after migration: zero errors and the
+  eight documented warnings. Direct database SSL enforcement remains active in
+  both projects, and an encrypted production export was created and successfully
+  verified before migration.

@@ -418,7 +418,7 @@ export function SessionPage() {
       } catch {
         /* Server completion is authoritative. */
       }
-      navigate('/')
+      navigate('/app')
     } catch {
       setFinishError('Unable to confirm completion. Retry when connected.')
     } finally {

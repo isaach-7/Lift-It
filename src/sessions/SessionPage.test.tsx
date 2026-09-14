@@ -45,7 +45,14 @@ function view() {
     from: () => ({ select: () => ({ eq: progression }) }),
   } as unknown as SupabaseClient
   return render(
-    <AuthContext value={{ client, state: { status: 'ready', session } }}>
+    <AuthContext
+      value={{
+        client,
+        state: { status: 'ready', session },
+        passwordRecoveryUserId: null,
+        completePasswordRecovery: vi.fn(),
+      }}
+    >
       <ProfileContext
         value={{
           profile: {
@@ -55,6 +62,8 @@ function view() {
             weekly_goal: 4,
             preferred_weight_unit: 'kg',
             onboarding_completed_at: '2026-09-09',
+            fitness_data_consent_at: '2026-09-14',
+            privacy_notice_version: '2026-09-14',
           },
           setProfile: vi.fn(),
         }}

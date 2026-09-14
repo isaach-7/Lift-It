@@ -10,7 +10,8 @@ import {
 } from '../lib/form-validation.ts'
 
 export function LoginPage() {
-  const { client, state } = useAuth()
+  const { client, state, passwordRecoveryUserId, completePasswordRecovery } =
+    useAuth()
   const { pathname } = useLocation()
   const mode =
     pathname === '/register'
@@ -29,8 +30,11 @@ export function LoginPage() {
   const [error, setError] = useState('')
   const [updated, setUpdated] = useState(false)
   const signedIn = state.status === 'ready' && state.session
-  if (signedIn && mode === 'login') return <Navigate to="/" replace />
-  if (updated) return <Navigate to="/" replace />
+  const canUpdatePassword = Boolean(
+    signedIn && passwordRecoveryUserId === signedIn.user.id,
+  )
+  if (signedIn && mode === 'login') return <Navigate to="/app" replace />
+  if (updated) return <Navigate to="/app" replace />
   const title = {
     login: 'Welcome back.',
     register: 'Create your account.',
@@ -99,6 +103,7 @@ export function LoginPage() {
       } else {
         const { error } = await client.auth.updateUser({ password })
         if (error) throw error
+        completePasswordRecovery()
         setPassword('')
         setConfirmation('')
         setUpdated(true)
@@ -156,7 +161,7 @@ export function LoginPage() {
           alt="Athlete loading a weight plate onto a barbell in a gym"
         />
         <div className="auth-visual-copy">
-          <Brand to="/login" />
+          <Brand />
           <p>Track the work.</p>
           <strong>See the progress.</strong>
         </div>
@@ -164,7 +169,7 @@ export function LoginPage() {
       <section className="auth-panel">
         <div className="auth-card">
           <div className="auth-mobile-brand">
-            <Brand to="/login" />
+            <Brand />
           </div>
           <p className="eyebrow">
             {mode === 'login'
@@ -181,7 +186,7 @@ export function LoginPage() {
                 ? 'A simple place to build a stronger routine.'
                 : 'Use a password you do not use elsewhere.'}
           </p>
-          {mode === 'update' && !signedIn ? (
+          {mode === 'update' && !canUpdatePassword ? (
             <>
               <p role="alert">
                 This recovery link is missing, invalid, or expired.

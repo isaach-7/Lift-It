@@ -12,6 +12,8 @@ function view(path = '/workouts') {
       value={{
         client: {} as SupabaseClient,
         state: { status: 'ready', session: { user: { id: 'a' } } as Session },
+        passwordRecoveryUserId: null,
+        completePasswordRecovery: vi.fn(),
       }}
     >
       <RouterProvider

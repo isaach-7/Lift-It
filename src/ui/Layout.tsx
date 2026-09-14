@@ -22,9 +22,9 @@ export function Layout() {
   return (
     <div className="app-shell">
       <header className="app-header">
-        <Brand />
+        <Brand to="/app" />
         <nav aria-label="Main navigation">
-          <NavLink to="/" end>
+          <NavLink to="/app" end>
             Home
           </NavLink>
           <NavLink to="/workouts">Workouts</NavLink>

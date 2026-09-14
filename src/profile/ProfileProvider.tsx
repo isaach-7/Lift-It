@@ -54,10 +54,12 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
         </section>
       </main>
     )
-  if (!profile.onboarding_completed_at && pathname !== '/onboarding')
+  const ready = Boolean(
+    profile.onboarding_completed_at && profile.fitness_data_consent_at,
+  )
+  if (!ready && pathname !== '/onboarding')
     return <Navigate to="/onboarding" replace />
-  if (profile.onboarding_completed_at && pathname === '/onboarding')
-    return <Navigate to="/" replace />
+  if (ready && pathname === '/onboarding') return <Navigate to="/app" replace />
   return (
     <ProfileContext value={{ profile, setProfile }}>{children}</ProfileContext>
   )
