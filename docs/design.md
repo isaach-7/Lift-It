@@ -121,6 +121,11 @@ Exact SQL types, constraints, indexes, and Row Level Security policies will be s
 
 Data-driven screens explicitly support loading, loaded, empty, and error states. Skeletons reserve roughly the same dimensions as final content. Authentication has an intentional checking state so signed-in users do not see the login page flash.
 
+An authenticated profile save that receives an unauthorized response may restore
+the in-memory session once and retry the same idempotent request. A second
+unauthorized response is shown as an expired sign-in instead of a generic save
+failure. The form keeps its entered values throughout the retry.
+
 Workout inputs update local state immediately and do not write on every keystroke. Completing a set begins persistence without freezing unrelated controls. Failed writes retain the entered value where practical and offer a retry path. A future offline synchronization system is outside v1.
 
 Completed set controls are reversible while a workout remains active. Reopening a
@@ -190,6 +195,25 @@ writes at the trusted boundary. React renders user strings as text; rich HTML is
 not accepted or injected, so a client HTML-sanitizer dependency is unnecessary.
 There is no custom cross-origin API route in v1; database access uses the Supabase
 client, Row Level Security and narrowly granted functions.
+
+## Public alpha delivery
+
+The first hosted release is a link-accessible public alpha on Vercel. It uses the
+generated HTTPS production address, remains intentionally excluded from search,
+and is initially supported only for the project owner's existing account. A
+custom domain and external-user email delivery do not block this alpha.
+
+The existing hosted Supabase project becomes the alpha production database so
+the owner's account and workout history remain intact. Before deployment, all
+seven repository migrations and all hosted rollback-only SQL suites must be
+verified. The browser receives only the Supabase project URL and publishable key;
+local environment files and privileged keys remain outside version control.
+
+Vercel preview and production deployments use the same validated source revision.
+Supabase keeps exact localhost, preview and production callback and password-reset
+paths. The default Supabase email sender is acceptable only for the authorized
+owner account. A custom SMTP sender, custom domain, separate development Supabase
+project and external-user support are gates for the later private beta.
 
 ## Verification approach
 

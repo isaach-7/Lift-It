@@ -187,3 +187,61 @@
   chunks. See `docs/performance.md` for measured production bundle sizes.
 - Recorded the complete control and release checklist in
   `docs/web-quality-audit.md`.
+
+## 2026-09-10: Public alpha preparation started (issue #8)
+
+- Merged the completed password-account and workout flow through pull request #7
+  after its full repository check and GitHub Actions verification passed.
+- Closed the completed workout-flow issue and the superseded email-link account
+  issue with references to the merged implementation.
+- Selected a link-accessible, intentionally unindexed Vercel release as the first
+  public alpha, initially supported only for the owner's authorized account.
+- Kept the existing hosted Supabase project and its real account data as the alpha
+  production database. A separate development project, custom domain and custom
+  SMTP remain gates for inviting external beta users.
+- Corrected the setup guide to include all seven migrations and the current 106
+  frontend tests and five local SQL suites.
+- Verified the hosted Supabase schema includes the seven repository migrations,
+  including weight-unit preferences, partial workout completion and reopening a
+  completed set.
+- Ran all five hosted SQL suites inside rollback-only transactions. Each suite
+  passed, and a follow-up check confirmed that no synthetic `example.invalid`
+  accounts remained in the hosted project.
+
+## 2026-09-14: Custom domain and email delivery
+
+- Confirmed `lift-it.site` redirects permanently to the canonical
+  `https://www.lift-it.site/` origin and both domains have valid Vercel
+  configuration and managed TLS certificates.
+- Changed the production Supabase Site URL to `https://www.lift-it.site` and
+  added the exact production confirmation and recovery redirects without
+  removing localhost, generated production, or active preview URLs.
+- Confirmed custom Supabase SMTP is enabled with the verified Resend domain and
+  the sender `Lift-It <no-reply@lift-it.site>`.
+- Sent a real confirmation message to a new launch-check address. Resend recorded
+  both Sent and Delivered events with the expected sender and subject.
+- Enabled receiving for `lift-it.site`, published the required MX record in
+  Vercel DNS, and confirmed Resend reports the domain ready to send and receive
+  email. This makes `support@lift-it.site` a working receiving address in the
+  Resend inbox for the initial beta support process.
+
+## 2026-09-14: Public alpha preview checks
+
+- Created fresh confirmed accounts through the production Supabase project and
+  verified real confirmation delivery through Resend rather than a mocked auth
+  session.
+- Confirmed the Vercel branch preview accepts its allow-listed callback and that
+  the production confirmation link returns to
+  `https://www.lift-it.site/auth/callback` before routing to onboarding on the
+  canonical origin.
+- Saved a new profile with optional measurements omitted, created a workout,
+  added Barbell Bench Press with one planned set, and saved the routine.
+- Started the workout, persisted a completed set, reloaded the session URL, and
+  confirmed the saved set and active session resumed without losing data.
+- Finished the workout and confirmed the dashboard showed the completed weekly
+  attendance, recent workout, and first exercise-progress record.
+- Repeated the profile, routine, live-set, refresh/resume, completion, and
+  dashboard-history journey on `https://www.lift-it.site` to smoke-test the
+  custom domain against real production data.
+- `npm run check` passed with 107 frontend tests, all five local SQL suites,
+  lint, formatting, TypeScript, and the production build.

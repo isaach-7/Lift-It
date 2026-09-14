@@ -14,7 +14,7 @@ import {
 import type { WeightUnit } from '../units/weight.ts'
 import { validateProfile } from '../lib/form-validation.ts'
 export function ProfilePage({ onboarding = false }: { onboarding?: boolean }) {
-  const { client } = useAuth()
+  const { client, state } = useAuth()
   const { profile, setProfile } = useProfile()
   const [name, setName] = useState(profile.preferred_name ?? '')
   const [goal, setGoal] = useState(String(profile.weekly_goal ?? 4))
@@ -67,16 +67,36 @@ export function ProfilePage({ onboarding = false }: { onboarding?: boolean }) {
       return
     }
     try {
-      const { data, error } = await client.rpc('save_profile', {
+      const request = {
         p_name: name.trim(),
         p_goal: Number(goal),
         p_height: height === '' ? null : Number(height),
         p_weight: weightKg,
         p_weight_id: weightId,
         p_unit: unit,
-      })
-      if (error) throw error
-      setProfile(rpcRow<Profile>(data))
+      }
+      let response = await client.rpc('save_profile', request)
+      if (
+        response.status === 401 &&
+        state.status === 'ready' &&
+        state.session
+      ) {
+        const { error: sessionError } = await client.auth.setSession({
+          access_token: state.session.access_token,
+          refresh_token: state.session.refresh_token,
+        })
+        if (!sessionError) response = await client.rpc('save_profile', request)
+      }
+      if (response.error) {
+        if (response.status === 401) {
+          setError(
+            'Your sign-in expired. Open LiftIt in your browser and sign in again. Your entries are still here.',
+          )
+          return
+        }
+        throw response.error
+      }
+      setProfile(rpcRow<Profile>(response.data))
       setWeight('')
       setWeightId(crypto.randomUUID())
       setSaved(true)
