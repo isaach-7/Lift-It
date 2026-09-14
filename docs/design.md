@@ -175,13 +175,13 @@ The calorie tracker, barcode scanning, social features, React Native application
 
 ## Search, security and delivery
 
-LiftIt v1 is an authenticated application without a public content or marketing
-page. All routes therefore send `noindex, nofollow`, and `robots.txt` blocks
-crawling until a useful public landing page and production canonical origin
-exist. Page titles and descriptions still follow the active route for clear
-browser history and future public-page reuse. A sitemap, canonical URLs,
-structured data, Search Console and analytics are release work for public pages;
-the app does not publish guessed URLs or load optional tracking scripts early.
+The searchable public beta uses `https://www.lift-it.site` as its canonical
+production origin. `/` is a public landing page and the authenticated dashboard is
+at `/app`. Only the landing page is indexable. `/app`, authentication, password
+recovery, onboarding, profile, workout, session, privacy and unknown routes use
+`noindex`. `robots.txt` permits crawling so those route directives can be read and
+points to a sitemap containing only the canonical landing page. The landing page
+publishes canonical and Open Graph metadata. No analytics script is installed.
 
 Vercel sends a restrictive Content Security Policy and standard browser security
 headers. The policy permits same-origin assets and only Supabase HTTPS and WebSocket
@@ -195,6 +195,29 @@ writes at the trusted boundary. React renders user strings as text; rich HTML is
 not accepted or injected, so a client HTML-sanitizer dependency is unnecessary.
 There is no custom cross-origin API route in v1; database access uses the Supabase
 client, Row Level Security and narrowly granted functions.
+
+Registration is open to people aged 16 and over, with the United Kingdom as the
+initial audience. The public page describes only shipped routine building, live
+workout logging and progression behavior. It does not promise calorie tracking,
+social features, an AI assistant or other deferred work.
+
+The public privacy notice explains what LiftIt collects, the purposes and lawful
+bases, Supabase, Vercel and Resend processing, retention, deletion, security and
+individual rights. LiftIt does not sell personal data or use advertising
+analytics. An unticked onboarding acknowledgement records the privacy-notice
+version and consent time before workout or optional body information is stored.
+The acknowledgement confirms an age of at least 16 and explicit consent for any
+fitness or body information that may be special-category health data. Optional
+height and body-weight fields remain optional.
+
+Initial account deletion uses a verified request to `support@lift-it.site`.
+Deleting the Supabase Auth user cascades to application data. Supabase-managed
+encryption, TLS, RLS and scoped SECURITY DEFINER functions protect stored data;
+function ownership checks remain in hosted SQL tests. Custom column encryption is
+not added because it would complicate workout queries without a practical
+security improvement. Direct PostgreSQL SSL enforcement follows confirmation
+that there are no non-SSL clients. Paid backups or a tested encrypted export are
+required before LiftIt is described as durable storage.
 
 ## Public alpha delivery
 
@@ -214,6 +237,27 @@ Supabase keeps exact localhost, preview and production callback and password-res
 paths. The default Supabase email sender is acceptable only for the authorized
 owner account. A custom SMTP sender, custom domain, separate development Supabase
 project and external-user support are gates for the later private beta.
+
+## Searchable public beta (supersedes the alpha routing and environment policy)
+
+Open registration remains enabled. The public homepage lives at `/`, while signed
+in users enter the application at `/app`. Authentication callbacks, onboarding,
+navigation and workout completion return to `/app` when no more specific private
+destination applies. A normally signed-in session cannot use
+`/update-password`; that form is available only after Supabase emits a genuine
+`PASSWORD_RECOVERY` event.
+
+Vercel Production uses the existing production Supabase project. Vercel Preview
+and local development use the separate LiftIt Development project. Both projects
+receive the same reviewed migrations, but hosted SQL suites run inside rollback-
+only transactions before a beta merge. Production data is not copied into the
+development project.
+
+Custom confirmation, recovery, password-changed and email-change messages retain
+Supabase template variables. The 12-character server-side minimum remains in
+force. Leaked-password detection is unavailable on the current plan and is
+reconsidered with a plan upgrade. SMTP credentials, service-role keys and API
+secrets stay only in provider dashboards.
 
 ## Verification approach
 

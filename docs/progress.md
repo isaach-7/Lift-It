@@ -261,3 +261,21 @@
   confirmed the saved profile, completed workout, weekly attendance, recent
   history, and exercise-progress state remained available without console
   warnings or errors.
+
+## 2026-09-14: Searchable public beta defined (issue #11)
+
+- Accepted ADR 0011 with `https://www.lift-it.site` as the canonical origin, a
+  public landing page at `/` and the authenticated dashboard at `/app`.
+- Kept registration open for a UK-first audience aged 16 or over and retained
+  routines, live workout logging and progression as the complete beta scope.
+- Required an unticked onboarding acknowledgement before storing workout or body
+  information, with a public privacy notice and verified deletion requests sent
+  to `support@lift-it.site`.
+- Limited indexing to `/`, while keeping private, authentication, recovery,
+  privacy and unknown routes `noindex` without blocking their crawl access.
+- Assigned Vercel Production to the existing production Supabase project and
+  Vercel Preview to the separate LiftIt Development project before further
+  migrations are applied.
+- Retained Supabase-managed encryption, TLS, RLS and scoped RPC functions. Deferred
+  leaked-password detection to a paid plan and made an encrypted export or paid
+  backup a durability gate.
