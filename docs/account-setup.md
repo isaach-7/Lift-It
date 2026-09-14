@@ -6,6 +6,17 @@ Copy `.env.example` to `.env.local` and set the project URL and publishable key.
 Never use a service-role key in frontend environment variables. Start with
 `npm run dev` and open `http://localhost:5173`.
 
+Use separate hosted projects:
+
+- local development and every Vercel Preview use the `LiftIt Development`
+  Supabase project;
+- Vercel Production uses the existing production Supabase project.
+
+Scope both `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` separately in
+Vercel. Store them as Config values because Vite intentionally exposes them in
+the browser bundle. Do not add Preview to a production value or Production to a
+development value. Neither environment needs a service-role key.
+
 ## Authentication configuration
 
 Enable Email and new signups. Keep Confirm email enabled. Set minimum password
@@ -60,6 +71,11 @@ profile, template, session, set and progression operations. The later migrations
 add the kg/lb display preference, intentional partial completion and reversible
 set completion. Existing users complete onboarding; name-only templates remain
 editable drafts.
+
+Apply this history to `LiftIt Development` before testing a new migration. Apply
+new migrations to development first, run every hosted SQL suite inside its
+rollback-only transaction, and use the reviewed Preview before applying the same
+migration to production.
 
 ## Verification
 

@@ -279,3 +279,15 @@
 - Retained Supabase-managed encryption, TLS, RLS and scoped RPC functions. Deferred
   leaked-password detection to a paid plan and made an encrypted export or paid
   backup a durability gate.
+
+## 2026-09-14: Preview database separated
+
+- Created the independent Ireland-region `LiftIt Development` Supabase project
+  before adding another migration.
+- Scoped Vercel Production browser configuration to the existing production
+  project and every Vercel Preview to `LiftIt Development`.
+- Stored the browser-visible project URL and publishable key as Vercel Config
+  values. No service-role key, database password or SMTP credential entered the
+  repository or Vite environment.
+- Kept local, generated production and active Preview auth redirects while the
+  two hosted projects receive the same reviewed migration history.
