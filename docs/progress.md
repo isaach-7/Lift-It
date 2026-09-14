@@ -245,3 +245,19 @@
   custom domain against real production data.
 - `npm run check` passed with 107 frontend tests, all five local SQL suites,
   lint, formatting, TypeScript, and the production build.
+
+## 2026-09-14: Public alpha deployed
+
+- Marked pull request #9 ready after the fresh preview checks and merged it to
+  `main` at `1019dac`.
+- Confirmed the post-merge GitHub Actions repository check and Vercel production
+  deployment both completed successfully for the merge commit.
+- Confirmed `/`, `/login`, `/auth/callback`, and `/update-password` each return
+  HTTP 200 from `https://www.lift-it.site`, while the apex domain returns HTTP
+  308 to the canonical `www` origin.
+- Rechecked the production Content Security Policy, permissions, referrer,
+  HSTS, content-type, frame, and alpha `noindex, nofollow` headers.
+- Reloaded the authenticated custom-domain session after deployment and
+  confirmed the saved profile, completed workout, weekly attendance, recent
+  history, and exercise-progress state remained available without console
+  warnings or errors.
