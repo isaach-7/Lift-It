@@ -224,3 +224,24 @@
   Vercel DNS, and confirmed Resend reports the domain ready to send and receive
   email. This makes `support@lift-it.site` a working receiving address in the
   Resend inbox for the initial beta support process.
+
+## 2026-09-14: Public alpha preview checks
+
+- Created fresh confirmed accounts through the production Supabase project and
+  verified real confirmation delivery through Resend rather than a mocked auth
+  session.
+- Confirmed the Vercel branch preview accepts its allow-listed callback and that
+  the production confirmation link returns to
+  `https://www.lift-it.site/auth/callback` before routing to onboarding on the
+  canonical origin.
+- Saved a new profile with optional measurements omitted, created a workout,
+  added Barbell Bench Press with one planned set, and saved the routine.
+- Started the workout, persisted a completed set, reloaded the session URL, and
+  confirmed the saved set and active session resumed without losing data.
+- Finished the workout and confirmed the dashboard showed the completed weekly
+  attendance, recent workout, and first exercise-progress record.
+- Repeated the profile, routine, live-set, refresh/resume, completion, and
+  dashboard-history journey on `https://www.lift-it.site` to smoke-test the
+  custom domain against real production data.
+- `npm run check` passed with 107 frontend tests, all five local SQL suites,
+  lint, formatting, TypeScript, and the production build.
