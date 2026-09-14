@@ -22,11 +22,17 @@ Local URLs:
 - Verification redirect: `http://localhost:5173/auth/callback`
 - Recovery redirect: `http://localhost:5173/update-password`
 
-For production, use the actual HTTPS site origin and allow those two exact paths.
-Do not guess a domain or use a broad wildcard. Configure a verified SMTP sender
-before public release. Supabase's built-in sender restricts recipients to project
-organization members and has development rate limits. SMTP credentials must be
-entered securely in the Supabase dashboard, never committed to this repository.
+Production URLs:
+
+- Site URL: `https://www.lift-it.site`
+- Verification redirect: `https://www.lift-it.site/auth/callback`
+- Recovery redirect: `https://www.lift-it.site/update-password`
+
+Keep exact localhost, generated production, and active Vercel preview redirects
+until development is fully separated. Do not use a broad wildcard. Production
+authentication email uses the verified Resend domain and the sender
+`Lift-It <no-reply@lift-it.site>`. SMTP credentials remain in the provider
+dashboards and must never be committed to this repository.
 
 Sources:
 
