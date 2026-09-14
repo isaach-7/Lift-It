@@ -315,3 +315,13 @@
 - Updated callbacks, navigation, workout completion and signed-in redirects to
   use `/app`, while leaving the landing and privacy pages available without an
   initialized Supabase session.
+
+## 2026-09-14: Search metadata published
+
+- Removed the site-wide `noindex, nofollow` response header and made only `/`
+  indexable with the permanent `https://www.lift-it.site/` canonical URL.
+- Added route-aware robots, description, Open Graph and social-card metadata;
+  private, authentication, recovery, privacy and unknown routes remain
+  `noindex, follow`.
+- Published a crawlable `robots.txt` and a one-URL sitemap without blocking the
+  private routes whose `noindex` directive crawlers need to read.

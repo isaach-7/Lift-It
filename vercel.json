@@ -26,10 +26,15 @@
         {
           "key": "X-Frame-Options",
           "value": "DENY"
-        },
+        }
+      ]
+    },
+    {
+      "source": "/((?!robots\\.txt$|sitemap\\.xml$|favicon\\.svg$|auth-strength-training\\.webp$|exercise-images/|assets/).+)",
+      "headers": [
         {
           "key": "X-Robots-Tag",
-          "value": "noindex, nofollow"
+          "value": "noindex, follow"
         }
       ]
     },

@@ -164,10 +164,31 @@ describe('account foundation', () => {
     ).toBeInTheDocument()
   })
 
+  it('marks the public landing as canonical and indexable', async () => {
+    renderApp('/')
+    expect(document.querySelector('meta[name="robots"]')).toHaveAttribute(
+      'content',
+      'index, follow',
+    )
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      'href',
+      'https://www.lift-it.site/',
+    )
+    expect(document.querySelector('meta[property="og:url"]')).toHaveAttribute(
+      'content',
+      'https://www.lift-it.site/',
+    )
+  })
+
   it('sets useful route metadata while keeping private pages out of search', async () => {
     renderApp('/register')
     await screen.findByLabelText('Email address')
     expect(document.title).toBe('Create account | LiftIt')
+    expect(document.querySelector('meta[name="robots"]')).toHaveAttribute(
+      'content',
+      'noindex, follow',
+    )
+    expect(document.querySelector('link[rel="canonical"]')).toBeNull()
   })
 
   it('keeps private content and the login form hidden while checking', async () => {

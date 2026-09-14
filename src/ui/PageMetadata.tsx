@@ -1,6 +1,8 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
+const canonicalOrigin = 'https://www.lift-it.site'
+
 const metadata = [
   {
     match: /^\/$/,
@@ -79,23 +81,40 @@ export function PageMetadata() {
       title: 'Page unavailable',
       description: 'The requested LiftIt page is unavailable.',
     }
+    const title = `${page.title} | LiftIt`
+    const indexable = pathname === '/'
+    const pageUrl = `${canonicalOrigin}${pathname}`
     document.title = `${page.title} | LiftIt`
-    document
-      .querySelector<HTMLMetaElement>('meta[name="description"]')
-      ?.setAttribute('content', page.description)
-    document
-      .querySelector<HTMLMetaElement>('meta[property="og:title"]')
-      ?.setAttribute('content', `${page.title} | LiftIt`)
-    document
-      .querySelector<HTMLMetaElement>('meta[property="og:description"]')
-      ?.setAttribute('content', page.description)
-    document
-      .querySelector<HTMLMetaElement>('meta[name="twitter:title"]')
-      ?.setAttribute('content', `${page.title} | LiftIt`)
-    document
-      .querySelector<HTMLMetaElement>('meta[name="twitter:description"]')
-      ?.setAttribute('content', page.description)
+    setMeta('name', 'description', page.description)
+    setMeta('name', 'robots', indexable ? 'index, follow' : 'noindex, follow')
+    setMeta('property', 'og:title', title)
+    setMeta('property', 'og:description', page.description)
+    setMeta('property', 'og:url', pageUrl)
+    setMeta('name', 'twitter:title', title)
+    setMeta('name', 'twitter:description', page.description)
+
+    const canonical = document.querySelector<HTMLLinkElement>(
+      'link[rel="canonical"]',
+    )
+    if (indexable) {
+      const link = canonical ?? document.createElement('link')
+      link.rel = 'canonical'
+      link.href = `${canonicalOrigin}/`
+      if (!canonical) document.head.append(link)
+    } else {
+      canonical?.remove()
+    }
   }, [pathname])
 
   return null
+}
+
+function setMeta(attribute: 'name' | 'property', key: string, content: string) {
+  const existing = document.querySelector<HTMLMetaElement>(
+    `meta[${attribute}="${key}"]`,
+  )
+  const element = existing ?? document.createElement('meta')
+  element.setAttribute(attribute, key)
+  element.content = content
+  if (!existing) document.head.append(element)
 }
