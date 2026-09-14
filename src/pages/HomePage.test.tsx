@@ -32,6 +32,8 @@ function view() {
         value={{
           client: { rpc, from } as unknown as SupabaseClient,
           state: { status: 'ready', session: null },
+          passwordRecoveryUserId: null,
+          completePasswordRecovery: vi.fn(),
         }}
       >
         <ProfileContext value={{ profile, setProfile: vi.fn() }}>

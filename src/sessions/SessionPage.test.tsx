@@ -45,7 +45,14 @@ function view() {
     from: () => ({ select: () => ({ eq: progression }) }),
   } as unknown as SupabaseClient
   return render(
-    <AuthContext value={{ client, state: { status: 'ready', session } }}>
+    <AuthContext
+      value={{
+        client,
+        state: { status: 'ready', session },
+        passwordRecoveryUserId: null,
+        completePasswordRecovery: vi.fn(),
+      }}
+    >
       <ProfileContext
         value={{
           profile: {

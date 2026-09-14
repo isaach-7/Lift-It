@@ -73,10 +73,11 @@ function renderApp(path = '/') {
   )
 }
 
-function emitSession(value: Session | null) {
-  mocks.listeners.forEach((listener) =>
-    listener(value ? 'SIGNED_IN' : 'SIGNED_OUT', value),
-  )
+function emitSession(
+  value: Session | null,
+  event = value ? 'SIGNED_IN' : 'SIGNED_OUT',
+) {
+  mocks.listeners.forEach((listener) => listener(event, value))
 }
 
 beforeEach(() => {
@@ -284,8 +285,12 @@ describe('account foundation', () => {
     )
   })
 
-  it('keeps an authenticated recovery session on the password update form', async () => {
+  it('allows password updates only after a recovery auth event', async () => {
     mocks.getSession.mockResolvedValue({ data: { session }, error: null })
+    mocks.initialize.mockImplementationOnce(async () => {
+      emitSession(session, 'PASSWORD_RECOVERY')
+      return { error: null }
+    })
     mocks.updateUser.mockResolvedValue({ error: null })
     const user = userEvent.setup()
     renderApp('/update-password')
@@ -297,6 +302,18 @@ describe('account foundation', () => {
       password: 'a-new-password',
     })
     expect(await screen.findByText('Hi, Alex!')).toBeInTheDocument()
+  })
+
+  it('rejects the update route for a normally authenticated session', async () => {
+    mocks.getSession.mockResolvedValue({ data: { session }, error: null })
+    renderApp('/update-password')
+    expect(
+      await screen.findByText(
+        'This recovery link is missing, invalid, or expired.',
+      ),
+    ).toBeInTheDocument()
+    expect(screen.queryByLabelText('Password')).not.toBeInTheDocument()
+    expect(mocks.updateUser).not.toHaveBeenCalled()
   })
 
   it.each(['/', '/login', '/auth/callback'])(

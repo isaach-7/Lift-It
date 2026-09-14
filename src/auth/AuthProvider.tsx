@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 
 import { getSupabaseClient } from '../lib/supabase.ts'
@@ -17,6 +17,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>(
     client ? { status: 'checking' } : { status: 'unconfigured' },
   )
+  const [passwordRecoveryUserId, setPasswordRecoveryUserId] = useState<
+    string | null
+  >(null)
+  const completePasswordRecovery = useCallback(
+    () => setPasswordRecoveryUserId(null),
+    [],
+  )
 
   useEffect(() => {
     if (!client) return
@@ -26,7 +33,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let revision = 0
     const {
       data: { subscription },
-    } = client.auth.onAuthStateChange((_event, session) => {
+    } = client.auth.onAuthStateChange((event, session) => {
+      if (active && event === 'PASSWORD_RECOVERY' && session) {
+        setPasswordRecoveryUserId(session.user.id)
+      } else if (active && (event === 'SIGNED_OUT' || !session)) {
+        setPasswordRecoveryUserId(null)
+      }
       // Initialization owns callback errors; auth events must not hide them.
       if (active && initialized) {
         revision += 1
@@ -55,5 +67,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [client])
 
-  return <AuthContext value={{ state, client }}>{children}</AuthContext>
+  return (
+    <AuthContext
+      value={{
+        state,
+        client,
+        passwordRecoveryUserId,
+        completePasswordRecovery,
+      }}
+    >
+      {children}
+    </AuthContext>
+  )
 }

@@ -10,7 +10,8 @@ import {
 } from '../lib/form-validation.ts'
 
 export function LoginPage() {
-  const { client, state } = useAuth()
+  const { client, state, passwordRecoveryUserId, completePasswordRecovery } =
+    useAuth()
   const { pathname } = useLocation()
   const mode =
     pathname === '/register'
@@ -29,6 +30,9 @@ export function LoginPage() {
   const [error, setError] = useState('')
   const [updated, setUpdated] = useState(false)
   const signedIn = state.status === 'ready' && state.session
+  const canUpdatePassword = Boolean(
+    signedIn && passwordRecoveryUserId === signedIn.user.id,
+  )
   if (signedIn && mode === 'login') return <Navigate to="/" replace />
   if (updated) return <Navigate to="/" replace />
   const title = {
@@ -99,6 +103,7 @@ export function LoginPage() {
       } else {
         const { error } = await client.auth.updateUser({ password })
         if (error) throw error
+        completePasswordRecovery()
         setPassword('')
         setConfirmation('')
         setUpdated(true)
@@ -181,7 +186,7 @@ export function LoginPage() {
                 ? 'A simple place to build a stronger routine.'
                 : 'Use a password you do not use elsewhere.'}
           </p>
-          {mode === 'update' && !signedIn ? (
+          {mode === 'update' && !canUpdatePassword ? (
             <>
               <p role="alert">
                 This recovery link is missing, invalid, or expired.

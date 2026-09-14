@@ -18,6 +18,8 @@ function renderProfile() {
       value={{
         client: { rpc, auth: { setSession } } as unknown as SupabaseClient,
         state: { status: 'ready', session },
+        passwordRecoveryUserId: null,
+        completePasswordRecovery: vi.fn(),
       }}
     >
       <ProfileContext
