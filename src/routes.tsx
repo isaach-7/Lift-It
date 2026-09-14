@@ -9,9 +9,11 @@ import {
   WorkoutsPage,
 } from './App.tsx'
 import { AuthCallbackPage } from './pages/AuthCallbackPage.tsx'
+import { LandingPage } from './pages/LandingPage.tsx'
 
 import { LoginPage } from './pages/LoginPage.tsx'
 import { NotFoundPage } from './pages/NotFoundPage.tsx'
+import { PrivacyPage } from './pages/PrivacyPage.tsx'
 
 export const routes = createRoutesFromElements(
   <Route
@@ -28,6 +30,8 @@ export const routes = createRoutesFromElements(
       </main>
     }
   >
+    <Route path="/" element={<LandingPage />} />
+    <Route path="/privacy" element={<PrivacyPage />} />
     {['/login', '/register', '/forgot-password', '/update-password'].map(
       (path) => (
         <Route key={path} path={path} element={<LoginPage key={path} />} />
@@ -35,7 +39,7 @@ export const routes = createRoutesFromElements(
     )}
     <Route path="/auth/callback" element={<AuthCallbackPage />} />
     <Route element={<PrivateLayout />}>
-      <Route path="/" element={<HomePage />} />
+      <Route path="/app" element={<HomePage />} />
       <Route path="/onboarding" element={<ProfilePage onboarding />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/workouts" element={<WorkoutsPage />} />

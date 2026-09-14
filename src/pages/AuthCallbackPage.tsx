@@ -4,7 +4,7 @@ import { useAuth } from '../auth/auth-context.ts'
 export function AuthCallbackPage() {
   const { state } = useAuth()
   if (state.status === 'ready' && state.session)
-    return <Navigate to="/" replace />
+    return <Navigate to="/app" replace />
   return (
     <main className="page-shell">
       <section

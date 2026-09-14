@@ -4,8 +4,19 @@ import { useLocation } from 'react-router-dom'
 const metadata = [
   {
     match: /^\/$/,
-    title: 'Home',
+    title: 'Workout tracker',
+    description:
+      'Build routines, log live workouts and follow clear progression with LiftIt.',
+  },
+  {
+    match: /^\/app$/,
+    title: 'Dashboard',
     description: 'Your LiftIt workout dashboard.',
+  },
+  {
+    match: /^\/privacy$/,
+    title: 'Privacy',
+    description: 'How LiftIt collects, uses and protects personal information.',
   },
   { match: /^\/login$/, title: 'Sign in', description: 'Sign in to LiftIt.' },
   {

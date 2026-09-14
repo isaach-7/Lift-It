@@ -63,6 +63,7 @@ Apply historical files once, in timestamp order:
 6. `20260910000200_allow_partial_workout_completion.sql`
 7. `20260910000300_allow_set_reopening.sql`
 8. `20260914000100_remove_obsolete_profile_function.sql`
+9. `20260914000200_add_fitness_data_consent.sql`
 
 Check hosted status before applying. The project originally used manual SQL
 Editor migrations; reconcile these exact versions with CLI migration history
@@ -72,7 +73,9 @@ profile, template, session, set and progression operations. The later migrations
 add the kg/lb display preference, intentional partial completion and reversible
 set completion. Migration 008 removes the obsolete five-argument `save_profile`
 overload after the unit-aware replacement is available. Existing users complete
-onboarding; name-only templates remain editable drafts.
+onboarding; name-only templates remain editable drafts. Migration 009 records
+explicit fitness-data consent and rejects profile, body-measurement, routine and
+workout writes until consent has been recorded.
 
 Apply this history to `LiftIt Development` before testing a new migration. Apply
 new migrations to development first, run every hosted SQL suite inside its
@@ -81,7 +84,7 @@ migration to production.
 
 ## Verification
 
-`npm run check` runs lint, formatting, 106 unit/component tests, five SQL suites and
+`npm run check` runs lint, formatting, 111 unit/component tests, five SQL suites and
 a production build. The SQL harness uses PGlite with auth roles and Supabase-like
 default table grants. Also run the SQL files under `supabase/tests/` against the
 hosted project as postgres. Each creates synthetic records in a transaction and

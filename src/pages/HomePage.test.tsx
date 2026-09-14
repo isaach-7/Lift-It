@@ -13,6 +13,8 @@ const profile = {
   weekly_goal: 4,
   preferred_weight_unit: 'kg' as const,
   onboarding_completed_at: '2026-09-09',
+  fitness_data_consent_at: '2026-09-14',
+  privacy_notice_version: '2026-09-14',
 }
 function view() {
   const from = () => {

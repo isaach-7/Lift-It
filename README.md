@@ -2,9 +2,11 @@
 
 LiftIt is a mobile-first workout tracker with simple, explainable weight progression. The workout tracker is the complete v1 focus; calorie tracking, social features, a native application, and an AI assistant are deferred.
 
-The app includes password registration and recovery, profile onboarding, light and
-dark themes, a curated 73-exercise library, workout templates with planned sets,
-resumable live sessions, weight progression, and a personal home dashboard.
+The public site includes a landing page and privacy notice. The signed-in app
+includes password registration and recovery, explicit-consent profile onboarding,
+light and dark themes, a curated 73-exercise library, workout templates with
+planned sets, resumable live sessions, weight progression, and a personal home
+dashboard.
 Optional equipment settings include a confirmed Matrix main-stack preset and six
 original rotatable machine previews. Unweighted bodyweight exercises track reps.
 

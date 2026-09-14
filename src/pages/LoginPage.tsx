@@ -33,8 +33,8 @@ export function LoginPage() {
   const canUpdatePassword = Boolean(
     signedIn && passwordRecoveryUserId === signedIn.user.id,
   )
-  if (signedIn && mode === 'login') return <Navigate to="/" replace />
-  if (updated) return <Navigate to="/" replace />
+  if (signedIn && mode === 'login') return <Navigate to="/app" replace />
+  if (updated) return <Navigate to="/app" replace />
   const title = {
     login: 'Welcome back.',
     register: 'Create your account.',
@@ -161,7 +161,7 @@ export function LoginPage() {
           alt="Athlete loading a weight plate onto a barbell in a gym"
         />
         <div className="auth-visual-copy">
-          <Brand to="/login" />
+          <Brand />
           <p>Track the work.</p>
           <strong>See the progress.</strong>
         </div>
@@ -169,7 +169,7 @@ export function LoginPage() {
       <section className="auth-panel">
         <div className="auth-card">
           <div className="auth-mobile-brand">
-            <Brand to="/login" />
+            <Brand />
           </div>
           <p className="eyebrow">
             {mode === 'login'

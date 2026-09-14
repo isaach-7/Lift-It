@@ -6,6 +6,7 @@ import { useAuth } from './auth-context.ts'
 export function AuthGate({ children }: { children: ReactNode }) {
   const { state } = useAuth()
   const { pathname } = useLocation()
+  if (pathname === '/' || pathname === '/privacy') return children
   if (state.status === 'ready') return children
 
   const callback =

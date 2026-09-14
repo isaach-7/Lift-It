@@ -298,3 +298,20 @@
   `save_profile` overload while retaining the unit-aware SECURITY DEFINER RPC.
 - Updated the rollback-only SQL suites to use the current signature and assert
   that the obsolete overload cannot be resolved.
+
+## 2026-09-14: Public landing, privacy and consent
+
+- Moved the signed-in dashboard to `/app` and made `/` a public landing page
+  using the existing strength-training image, with truthful descriptions of
+  routines, live set logging and explainable progression.
+- Added a public privacy notice covering collected information, purposes,
+  special-category consent, processors, retention, deletion, security, user
+  rights and the absence of data sales or advertising analytics.
+- Added an unticked age-and-explicit-consent acknowledgement to onboarding and
+  persisted its timestamp and privacy-notice version through one atomic profile
+  RPC.
+- Enforced consent in the database before body-measurement, routine, session,
+  set or progression writes, including attempts outside the browser client.
+- Updated callbacks, navigation, workout completion and signed-in redirects to
+  use `/app`, while leaving the landing and privacy pages available without an
+  initialized Supabase session.
