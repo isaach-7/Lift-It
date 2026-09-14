@@ -8,11 +8,11 @@ select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000001'
 do $$
 declare eid uuid; template_id uuid := '20000000-0000-4000-8000-000000000001'; sid uuid := '30000000-0000-4000-8000-000000000001'; se uuid; st uuid; result public.sets; undone jsonb; plan jsonb; p public.profiles;
 begin
- p:=public.save_profile(' Alex ',4,180,80,'40000000-0000-4000-8000-000000000001');
- perform public.save_profile('Alex',4,180,80,'40000000-0000-4000-8000-000000000001');
+ p:=public.save_profile(' Alex ',4,180,80,'40000000-0000-4000-8000-000000000001','kg');
+ perform public.save_profile('Alex',4,180,80,'40000000-0000-4000-8000-000000000001','kg');
  if p.preferred_name<>'Alex' or p.onboarding_completed_at is null or (select count(*) from public.weight_logs)<>1 then raise exception 'Profile retry failed'; end if;
- begin perform public.save_profile('Alex',8,180,null,null); raise exception 'Goal accepted'; exception when check_violation then null; end;
- begin perform public.save_profile('Alex',4,0,null,null); raise exception 'Height accepted'; exception when check_violation then null; end;
+ begin perform public.save_profile('Alex',8,180,null,null,'kg'); raise exception 'Goal accepted'; exception when check_violation then null; end;
+ begin perform public.save_profile('Alex',4,0,null,null,'kg'); raise exception 'Height accepted'; exception when check_violation then null; end;
  select id into eid from public.exercises where name='Barbell Bench Press';
  if eid is null then select id into eid from public.exercises where equipment_type='barbell' limit 1; end if;
  plan:=jsonb_build_array(jsonb_build_object('exercise_id',eid,'rest_timer_seconds',90,'auto_increment_enabled',true,'rep_range_lower',6,'rep_range_upper',10,'increment_amount',2.5,'available_weights',jsonb_build_array(),'equipment_label','Test bench','sets',jsonb_build_array(jsonb_build_object('id','50000000-0000-4000-8000-000000000001','set_type','standard','target_reps',null,'target_weight',null))));

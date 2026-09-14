@@ -62,6 +62,7 @@ Apply historical files once, in timestamp order:
 5. `20260910000100_add_weight_unit_preference.sql`
 6. `20260910000200_allow_partial_workout_completion.sql`
 7. `20260910000300_allow_set_reopening.sql`
+8. `20260914000100_remove_obsolete_profile_function.sql`
 
 Check hosted status before applying. The project originally used manual SQL
 Editor migrations; reconcile these exact versions with CLI migration history
@@ -69,8 +70,9 @@ before adopting `supabase db push`. Never replay an already applied migration.
 Migration 003 preserves account IDs and existing templates and adds transactional
 profile, template, session, set and progression operations. The later migrations
 add the kg/lb display preference, intentional partial completion and reversible
-set completion. Existing users complete onboarding; name-only templates remain
-editable drafts.
+set completion. Migration 008 removes the obsolete five-argument `save_profile`
+overload after the unit-aware replacement is available. Existing users complete
+onboarding; name-only templates remain editable drafts.
 
 Apply this history to `LiftIt Development` before testing a new migration. Apply
 new migrations to development first, run every hosted SQL suite inside its

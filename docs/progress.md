@@ -291,3 +291,10 @@
   repository or Vite environment.
 - Kept local, generated production and active Preview auth redirects while the
   two hosted projects receive the same reviewed migration history.
+
+## 2026-09-14: Obsolete profile function removed
+
+- Added a migration that revokes and drops only the superseded five-argument
+  `save_profile` overload while retaining the unit-aware SECURITY DEFINER RPC.
+- Updated the rollback-only SQL suites to use the current signature and assert
+  that the obsolete overload cannot be resolved.

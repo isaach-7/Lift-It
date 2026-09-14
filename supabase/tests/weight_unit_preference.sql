@@ -9,6 +9,9 @@ select set_config('request.jwt.claim.sub','70000000-0000-4000-8000-000000000001'
 do $$
 declare result public.profiles;
 begin
+  if to_regprocedure('public.save_profile(text,integer,numeric,numeric,uuid)') is not null then
+    raise exception 'Obsolete five-argument save_profile is still available';
+  end if;
   select * into result from public.save_profile('Alex', 4, null, null,
     '71000000-0000-4000-8000-000000000001', 'lb');
   if result.preferred_weight_unit <> 'lb' then
