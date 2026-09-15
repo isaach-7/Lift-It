@@ -387,3 +387,23 @@
   verification is no longer presented as pending release work.
 - Expanded the README with the live beta, a compressed homepage screenshot, the
   progression rules, engineering highlights and the current verification gate.
+
+## 2026-09-15: Usability test improvements
+
+- Simplified mobile workout routes to one compact sticky action row, hid the
+  fixed global navigation there, and only surfaced unsaved state after a change.
+- Standardised user-facing history dates as UK medium dates and reduced displayed
+  weight conversions to one decimal place without changing stored values.
+- Added session-aware completed workout titles and completion dates.
+- Replaced the one-point progress chart with a current-best summary, enlarged the
+  multi-session chart, and kept its recorded values visible in an accessible
+  table.
+- Added sticky exercise filters and 12-result rendering batches, a lightweight
+  product interface preview on the public homepage, installability metadata, and
+  concise registration data-use copy.
+- Verified the updated layouts at 390x844 and 320x568 with no horizontal
+  overflow. Focused workout routes hid the global navigation, kept 44px header
+  targets, used a 62-64px sticky action row, and left the final library action
+  clear of it.
+- `npm run check` passed with 122 frontend tests, all five local SQL suites,
+  lint, formatting, TypeScript, and the production build.
