@@ -1308,6 +1308,7 @@ input[type='number'] {
   align-items: center;
   gap: 0.65rem;
   width: max-content;
+  min-height: 2.75rem;
   color: var(--text);
   font-size: 1.45rem;
   font-weight: 850;
@@ -1917,6 +1918,31 @@ input[type='number'] {
   color: var(--accent);
 }
 
+.exercise-library-panel {
+  padding-bottom: 5rem;
+}
+
+.exercise-library-controls {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  margin: 0 calc(clamp(1rem, 3vw, 1.75rem) * -1) 1rem;
+  padding: 0.75rem clamp(1rem, 3vw, 1.75rem) 0.25rem;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface), transparent 3%);
+  backdrop-filter: blur(12px);
+}
+
+.exercise-library-controls .muscle-filters {
+  margin-top: 0.75rem;
+  margin-bottom: 0;
+}
+
+.load-more-exercises {
+  width: 100%;
+  margin-top: 1rem;
+}
+
 .save-bar {
   position: sticky;
   bottom: 4.25rem;
@@ -2033,9 +2059,51 @@ input[type='number'] {
 
 @media (max-width: 42rem) {
   .app-header .sign-out-button {
-    min-height: 2.5rem;
+    min-height: 2.75rem;
     padding: 0.45rem 0.65rem;
     font-size: 0.8rem;
+  }
+
+  .focused-workout-route {
+    padding-bottom: 0;
+  }
+
+  .focused-workout-route .app-header nav {
+    display: none;
+  }
+
+  .focused-workout-route .app-content {
+    padding-bottom: 0;
+  }
+
+  .focused-workout-route .save-bar {
+    bottom: 0;
+    margin-top: 4rem;
+  }
+
+  .focused-workout-route .editor-save-bar {
+    margin-top: 1rem;
+  }
+
+  .save-bar {
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom));
+  }
+
+  .save-bar > button,
+  .save-bar > button:first-child {
+    min-width: 0;
+    flex: 1 1 0;
+    padding-inline: 0.65rem;
+    font-size: 0.875rem;
+  }
+
+  .editor-save-bar > span {
+    flex: 0 0 auto;
+    color: var(--muted);
+    font-size: 0.75rem;
+    white-space: nowrap;
   }
 
   .app-header nav {
@@ -2110,6 +2178,11 @@ input[type='number'] {
     grid-template-columns:
       1.4rem minmax(7.2rem, 1.3fr) minmax(3.25rem, 0.7fr)
       minmax(3.25rem, 0.8fr) 2.25rem;
+  }
+
+  .save-bar > button,
+  .save-bar > button:first-child {
+    font-size: 0.8rem;
   }
 }
 
