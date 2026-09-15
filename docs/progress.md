@@ -375,3 +375,15 @@
   eight documented warnings. Direct database SSL enforcement remains active in
   both projects, and an encrypted production export was created and successfully
   verified before migration.
+
+## 2026-09-15: Project documentation cleanup
+
+- Closed issue #3 after confirming that branded authentication templates, the
+  verified Resend sender and real delivery checks were already complete.
+- Closed draft pull request #10 because analytics remains outside the current
+  beta scope and would require an explicit privacy and Content Security Policy
+  decision before adoption.
+- Updated the performance review and web quality audit so completed public beta
+  verification is no longer presented as pending release work.
+- Expanded the README with the live beta, a compressed homepage screenshot, the
+  progression rules, engineering highlights and the current verification gate.

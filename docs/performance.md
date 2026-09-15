@@ -1,11 +1,11 @@
 # Performance Review
 
-## Test environment
+## Initial test environment
 
 - Date: 2026-09-10
 - Build: local production build with Vite 8.2.2 and Node 24
 - Measurement: Vite minified output and gzip estimates
-- Browser field data: not yet available
+- Browser field data: not available
 
 ## Initial measurements
 
@@ -35,10 +35,32 @@ No chart, calendar, editor or analytics dependency exists. The largest private
 route chunk is the workout editor at 5.69 KB gzipped. Adding another bundle-analysis
 dependency is not justified at this size.
 
-## Remaining release measurements
+## Public beta verification
 
-Run Lighthouse and browser performance checks against a deployed preview on a
-narrow mobile viewport and throttled network. Record LCP, CLS and INP after the
-production domain and representative Supabase data exist. Verify the Content
-Security Policy in the browser console and exercise sign-in, session restoration,
-image loading and live workout saves before release.
+The 2026-09-14 beta checks covered the public landing page and authenticated app
+at mobile and desktop widths in both themes. The local Lighthouse baseline was:
+
+| Profile | Performance | Accessibility | Best practices | SEO |
+| ------- | ----------: | ------------: | -------------: | --: |
+| Mobile  |          95 |           100 |            100 | 100 |
+| Desktop |         100 |           100 |            100 | 100 |
+
+Cumulative layout shift and total blocking time were zero in both runs. The
+browser console remained free of warnings and errors while registration,
+recovery, profile onboarding, routine editing, live set persistence,
+refresh-and-resume, completion, history, exercise imagery and private-route
+loading were exercised against deployed Supabase environments.
+
+Production checks also confirmed that the Content Security Policy permits the
+required Supabase HTTPS and WebSocket traffic without permitting third-party
+scripts. Hashed assets retain immutable caching and the authentication image
+retains explicit dimensions.
+
+## Remaining measurement work
+
+Real-user Core Web Vitals and interaction data are not available because LiftIt
+does not install analytics or real-user monitoring for the current beta. Use
+manual browser performance profiles during representative gym sessions and
+repeat Lighthouse after material changes to the landing page, session logger, or
+initial dependency graph. Add field monitoring only after an explicit analytics
+and privacy decision; it is not required for the core workout path.

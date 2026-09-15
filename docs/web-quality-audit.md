@@ -1,6 +1,8 @@
 # Web Quality Audit
 
-Date: 2026-09-10
+- Initial audit: 2026-09-10
+- Public beta verification: 2026-09-14
+- Status refreshed: 2026-09-15
 
 This audit applies the supplied SEO, JavaScript delivery, form security and
 browser-aware design guides to the current workout-tracker v1. It distinguishes
@@ -13,13 +15,17 @@ domain, deployed headers or real browser field data.
   crawlable links.
 - Every route receives a specific document title and description. The static HTML
   contains useful fallback metadata before JavaScript runs.
-- Current routes are authentication or owner-only product screens. HTML metadata,
-  the Vercel `X-Robots-Tag` and `robots.txt` consistently prevent indexing.
-- A sitemap, canonical URLs, public structured data and `llms.txt` are intentionally
-  absent. There is no public content to list and no confirmed production origin.
-- Search Console and index requests remain blocked on a public landing page and
-  production domain. At that point, indexing rules must become route-specific so
-  private screens remain excluded.
+- `/` is a public landing page with a production canonical URL, description, Open
+  Graph metadata and crawlable links. The sitemap contains only that canonical
+  page.
+- `/app`, authentication, recovery, onboarding, profile, workout, session,
+  privacy and unknown routes publish `noindex, follow` and no canonical URL.
+  `robots.txt` permits crawling so search engines can read those directives.
+- Public structured data and `llms.txt` remain intentionally absent because the
+  current landing page has no supported rich-result type or content inventory
+  that would make them useful.
+- Search Console ownership and sitemap submission are operational follow-ups;
+  their completion is not recorded in this repository.
 - Analytics remains outside the critical path under the v1 scope. Adding it later
   requires consent and privacy decisions, a real measurement ID and an explicit
   Content Security Policy change.
@@ -83,13 +89,28 @@ domain, deployed headers or real browser field data.
 - Production Supabase keys remain limited to publishable client credentials.
   Service-role keys and SMTP credentials are excluded from Vite variables.
 
-## Release checks that require deployment
+## Deployment verification completed
 
-1. Exercise registration, recovery, session restore and workout persistence on a
-   Vercel preview while checking the console for Content Security Policy failures.
-2. Run Lighthouse on a narrow mobile viewport with network throttling and record
-   LCP, CLS and INP in `docs/performance.md`.
-3. Confirm HTTP redirects to HTTPS and inspect all response headers on the final
-   production origin.
-4. When a public landing page exists, add its canonical URL, sitemap and appropriate
-   structured data, then verify Search Console ownership and submit the sitemap.
+- Real confirmation, recovery, session restoration, profile onboarding, routine
+  editing, set persistence, refresh-and-resume, workout completion and account
+  deletion were exercised through deployed Preview and Production environments.
+- The browser console remained free of Content Security Policy failures, warnings
+  and errors during the verified journeys.
+- `https://lift-it.site` redirects permanently to
+  `https://www.lift-it.site/`; the canonical production routes return successfully
+  over managed HTTPS.
+- Production responses were checked for Content Security Policy, permissions,
+  referrer, HSTS, content-type and frame protections.
+- Mobile and desktop Lighthouse baselines are recorded in
+  `docs/performance.md`. Both reported zero cumulative layout shift and total
+  blocking time.
+- The public canonical URL, Open Graph URL, `robots.txt`, and one-URL sitemap are
+  deployed. Private routes retain route-level `noindex` metadata.
+
+## Operational follow-up
+
+- Verify Search Console ownership and submit the sitemap if this has not already
+  been completed outside the repository.
+- Gather qualitative performance feedback during real gym sessions. Field Core
+  Web Vitals remain unavailable without adding real-user monitoring, which needs
+  a separate analytics and privacy decision.
