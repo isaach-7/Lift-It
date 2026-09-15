@@ -17,6 +17,7 @@ import {
   parseWeight,
 } from '../units/weight.ts'
 import type { WeightUnit } from '../units/weight.ts'
+import { formatDate } from '../lib/date.ts'
 
 type Draft = {
   reps: string
@@ -147,6 +148,16 @@ export function SessionPage() {
     window.addEventListener('beforeunload', unload)
     return () => window.removeEventListener('beforeunload', unload)
   }, [drafts])
+  useEffect(() => {
+    if (!session) return
+    const state =
+      session.status === 'in_progress'
+        ? 'Active workout'
+        : session.status === 'completed'
+          ? 'Completed workout'
+          : 'Workout'
+    document.title = `${session.name} - ${state} | LiftIt`
+  }, [session])
   function draftFor(s: LoggedSet, e: SessionExercise): Draft {
     return (
       drafts[s.id] ?? {
@@ -453,7 +464,7 @@ export function SessionPage() {
       <header className="session-header">
         <div>
           <p className="eyebrow">
-            {active ? 'Workout in progress' : session.status}
+            {active ? 'Workout in progress' : 'Workout completed'}
           </p>
           <h1>{session.name}</h1>
           <p className="session-meta">
@@ -462,6 +473,11 @@ export function SessionPage() {
             <span>
               {sets.filter((set) => set.completed_at).length} sets done
             </span>
+            {!active && session.completed_at && (
+              <time dateTime={session.completed_at}>
+                {formatDate(session.completed_at)}
+              </time>
+            )}
           </p>
         </div>
         <UnitToggle

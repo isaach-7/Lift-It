@@ -11,6 +11,7 @@ import {
   displayWeight,
   parseWeight,
 } from '../units/weight.ts'
+import { formatDate } from '../lib/date.ts'
 import type { WeightUnit } from '../units/weight.ts'
 import { validateProfile } from '../lib/form-validation.ts'
 export function ProfilePage({ onboarding = false }: { onboarding?: boolean }) {
@@ -252,7 +253,9 @@ export function ProfilePage({ onboarding = false }: { onboarding?: boolean }) {
               <ul className="plain-list">
                 {history.map((row) => (
                   <li key={row.id}>
-                    <time>{new Date(row.logged_at).toLocaleDateString()}</time>
+                    <time dateTime={row.logged_at}>
+                      {formatDate(row.logged_at)}
+                    </time>
                     <strong>
                       {displayWeight(row.weight_kg, unit)} {unit}
                     </strong>
