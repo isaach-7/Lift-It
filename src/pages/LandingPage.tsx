@@ -50,13 +50,36 @@ export function LandingPage() {
               weight are optional.
             </p>
           </div>
-          <div className="landing-image">
-            <img
-              src="/auth-strength-training.webp"
-              width="1122"
-              height="1402"
-              alt="Athlete loading a weight plate onto a barbell in a gym"
-            />
+          <div className="landing-visual">
+            <div className="landing-image">
+              <img
+                src="/auth-strength-training.webp"
+                width="1122"
+                height="1402"
+                alt="Athlete loading a weight plate onto a barbell in a gym"
+              />
+            </div>
+            <section
+              className="product-preview"
+              aria-label="LiftIt workout interface preview"
+            >
+              <div className="product-preview-heading">
+                <div>
+                  <span>Live workout</span>
+                  <strong>Upper body</strong>
+                </div>
+                <span>12:48</span>
+              </div>
+              <div className="product-preview-set">
+                <span>Bench press</span>
+                <strong>20 kg</strong>
+                <strong>11 reps</strong>
+                <span className="preview-check" aria-label="Set saved">
+                  Saved
+                </span>
+              </div>
+              <p>Next weight: 22.5 kg</p>
+            </section>
           </div>
         </section>
         <section className="landing-features" aria-labelledby="features-title">
@@ -85,8 +108,9 @@ export function LandingPage() {
               <span>03</span>
               <h3>See what comes next</h3>
               <p>
-                LiftIt uses your rep range and equipment settings to make a
-                simple, explainable next-weight suggestion.
+                Set a 6-10 rep range and a 2.5 kg increment. Log 11 reps at 20
+                kg and LiftIt suggests 22.5 kg next; log 8 and it stays at 20
+                kg.
               </p>
             </article>
           </div>
