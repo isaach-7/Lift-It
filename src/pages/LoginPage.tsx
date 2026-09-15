@@ -264,6 +264,13 @@ export function LoginPage() {
                       update: 'Save password',
                     }[mode]}
               </button>
+              {mode === 'register' && (
+                <p className="register-privacy">
+                  LiftIt stores your account details and the workout information
+                  you choose to log. Read the{' '}
+                  <Link to="/privacy">privacy notice</Link>.
+                </p>
+              )}
               <div className="form-feedback">
                 {error && (
                   <p role="alert" className="error">

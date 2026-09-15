@@ -136,6 +136,18 @@ row visibly completed instead of implying that the database changed.
 
 Exercise media uses stable aspect-ratio containers, responsive sizing, lazy loading below the fold, and useful alternative text. Timers and numeric columns use stable widths and tabular numbers where appropriate. Motion is subtle, primarily uses transform and opacity, and respects reduced-motion preferences.
 
+Workout create, edit and session routes remove the global bottom navigation on
+small screens so the compact sticky action row is the only bottom control. The
+page reserves enough space for that row, and the editor only reports unsaved
+changes after the local draft differs from its loaded state. The exercise
+library keeps search and muscle filters sticky and renders matching exercises in
+small user-requested batches instead of mounting the full library at once.
+
+User-facing history dates use one shared UK medium-date formatter. Stored
+timestamps remain unchanged. Weight stays canonical in kilograms and retains its
+existing input precision; gym-facing converted values are rounded to at most one
+decimal place only when displayed.
+
 ## Workout experience redesign
 
 Live set rows use direct weight and rep entry rather than numeric pickers. Input
@@ -164,10 +176,19 @@ target, and a newly added set copies the preceding row's useful values locally.
 The session elapsed clock is isolated from the exercise list so its one-second
 updates do not rerender the logger.
 
+Completed session routes identify themselves as completed in the document title
+and show the completion date. Exercise progress shows a prominent current-best
+metric for one session, then introduces the trend chart from the second session.
+Recorded values remain visible in a text table alongside the chart.
+
 Authentication uses a responsive split composition with one strength-training
 image on desktop and a compact branded treatment on small screens. The active
 workout remains image-free. LiftIt uses a small progression mark beside the
 wordmark in navigation, authentication and the favicon.
+
+The public homepage keeps its training photography and adds a small HTML preview
+of the live workout interface. It gives one concrete progression example rather
+than implying a complex or opaque recommendation system.
 
 ## Scope boundaries
 

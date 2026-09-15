@@ -18,6 +18,8 @@ import { UnitToggle } from '../ui/UnitToggle.tsx'
 import { displayWeight, parseWeight } from '../units/weight.ts'
 import type { WeightUnit } from '../units/weight.ts'
 
+const exerciseBatchSize = 12
+
 function OptionalRepInput({
   value,
   label,
@@ -98,6 +100,7 @@ export function WorkoutEditor() {
   const [dirty, setDirty] = useState(false)
   const [query, setQuery] = useState('')
   const [group, setGroup] = useState<MuscleGroup | 'All'>('All')
+  const [visibleCount, setVisibleCount] = useState(exerciseBatchSize)
   const [picker, setPicker] = useState(false)
   const [unit, setUnit] = useState<WeightUnit>(profile.preferred_weight_unit)
   useEffect(() => {
@@ -179,6 +182,8 @@ export function WorkoutEditor() {
         </button>
       </section>
     )
+  const matchingExercises = filterExercises(library, query, group)
+  const visibleExercises = matchingExercises.slice(0, visibleCount)
   return (
     <>
       <div className="section-row editor-heading">
@@ -494,32 +499,47 @@ export function WorkoutEditor() {
             {picker ? 'Close exercise library' : 'Add exercises'}
           </button>
           {picker && (
-            <section className="panel">
+            <section className="panel exercise-library-panel">
               <h2>Exercise library</h2>
-              <label>
-                Search exercises
-                <input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  type="search"
-                />
-              </label>
-              <label>
-                Muscle group
-                <select
-                  value={group}
-                  onChange={(e) =>
-                    setGroup(e.target.value as MuscleGroup | 'All')
-                  }
+              <div className="exercise-library-controls">
+                <label>
+                  Search exercises
+                  <input
+                    value={query}
+                    onChange={(e) => {
+                      setQuery(e.target.value)
+                      setVisibleCount(exerciseBatchSize)
+                    }}
+                    type="search"
+                    placeholder="Name, muscle, or equipment"
+                  />
+                </label>
+                <div
+                  className="muscle-filters"
+                  aria-label="Filter by muscle group"
                 >
-                  <option>All</option>
-                  {muscleGroups.map((g) => (
-                    <option key={g}>{g}</option>
+                  {(['All', ...muscleGroups] as const).map((option) => (
+                    <button
+                      type="button"
+                      key={option}
+                      className={group === option ? 'active' : ''}
+                      aria-pressed={group === option}
+                      onClick={() => {
+                        setGroup(option)
+                        setVisibleCount(exerciseBatchSize)
+                      }}
+                    >
+                      {option}
+                    </button>
                   ))}
-                </select>
-              </label>
+                </div>
+                <p className="picker-feedback" role="status">
+                  Showing {visibleExercises.length} of{' '}
+                  {matchingExercises.length} exercises
+                </p>
+              </div>
               <div className="exercise-grid">
-                {filterExercises(library, query, group).map((exercise) => (
+                {visibleExercises.map((exercise) => (
                   <article className="exercise-card" key={exercise.id}>
                     <ExerciseImage
                       name={exercise.name}
@@ -558,16 +578,32 @@ export function WorkoutEditor() {
                   </article>
                 ))}
               </div>
-              {!filterExercises(library, query, group).length && (
+              {visibleExercises.length < matchingExercises.length && (
+                <button
+                  type="button"
+                  className="secondary-button load-more-exercises"
+                  onClick={() =>
+                    setVisibleCount((count) => count + exerciseBatchSize)
+                  }
+                >
+                  Show{' '}
+                  {Math.min(
+                    exerciseBatchSize,
+                    matchingExercises.length - visibleExercises.length,
+                  )}{' '}
+                  more
+                </button>
+              )}
+              {!matchingExercises.length && (
                 <p>No matching exercises. Try another search.</p>
               )}
             </section>
           )}
-          <div className="save-bar">
+          <div className="save-bar editor-save-bar">
             <button disabled={busy}>
               {busy ? 'Saving workout...' : 'Save workout'}
             </button>
-            <span>{dirty ? 'Unsaved changes' : 'No unsaved changes'}</span>
+            {dirty && <span role="status">Unsaved changes</span>}
           </div>
           {error && (
             <p className="error" role="alert">

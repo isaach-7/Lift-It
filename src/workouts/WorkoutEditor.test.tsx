@@ -113,6 +113,42 @@ it('keeps the draft and its ID after a save failure', async () => {
   expect(rpc.mock.calls[1]?.[1]).toEqual(first)
 })
 
+it('only shows the unsaved status after the draft changes', async () => {
+  const user = userEvent.setup()
+  view()
+  const name = await screen.findByLabelText('Workout name')
+  expect(screen.queryByText('Unsaved changes')).not.toBeInTheDocument()
+  expect(screen.queryByText('No unsaved changes')).not.toBeInTheDocument()
+  await user.type(name, 'Upper')
+  expect(screen.getByText('Unsaved changes')).toBeInTheDocument()
+})
+
+it('renders the exercise library in small batches', async () => {
+  vi.mocked(listExercises).mockResolvedValue(
+    Array.from({ length: 13 }, (_, index) => ({
+      id: `exercise-${index}`,
+      name: `Exercise ${index}`,
+      equipment_type: 'barbell' as const,
+      supports_added_weight: false,
+      muscle_group: 'Chest' as const,
+      primary_muscle: 'Chest',
+      secondary_muscles: [],
+      image_path: '',
+      instructions: [],
+    })),
+  )
+  const user = userEvent.setup()
+  view()
+  await user.click(await screen.findByRole('button', { name: 'Add exercises' }))
+  expect(screen.getAllByRole('button', { name: 'Add exercise' })).toHaveLength(
+    12,
+  )
+  await user.click(screen.getByRole('button', { name: 'Show 1 more' }))
+  expect(screen.getAllByRole('button', { name: 'Add exercise' })).toHaveLength(
+    13,
+  )
+})
+
 it('defaults bodyweight to reps and requires an explicit added-weight choice', async () => {
   vi.mocked(listExercises).mockResolvedValue([
     {

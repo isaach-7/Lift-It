@@ -15,7 +15,8 @@ export function roundWeight(value: number) {
 }
 
 export function displayWeight(valueKg: number, unit: WeightUnit) {
-  return String(roundWeight(fromKilograms(valueKg, unit)))
+  const value = fromKilograms(valueKg, unit)
+  return String(Math.round((value + Number.EPSILON) * 10) / 10)
 }
 
 export function parseWeight(value: string, unit: WeightUnit) {
