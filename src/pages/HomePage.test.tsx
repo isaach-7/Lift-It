@@ -16,7 +16,15 @@ const profile = {
   fitness_data_consent_at: '2026-09-14',
   privacy_notice_version: '2026-09-14',
 }
-function view() {
+function view(
+  recentRows: Array<{
+    id: string
+    name: string
+    status: 'completed'
+    started_at: string
+    completed_at: string
+  }> = [],
+) {
   const from = () => {
     const q = {
       select: () => q,
@@ -24,7 +32,7 @@ function view() {
       order: () => q,
       limit: () => q,
       maybeSingle: () => Promise.resolve({ data: null, error: null }),
-      returns: () => Promise.resolve({ data: [], error: null }),
+      returns: () => Promise.resolve({ data: recentRows, error: null }),
     }
     return q
   }
@@ -76,7 +84,7 @@ it('shows genuine empty states without invented chart values', async () => {
   expect(screen.queryByRole('img')).not.toBeInTheDocument()
   expect(screen.getByRole('progressbar')).toHaveAttribute('value', '0')
 })
-it('shows a one-point chart and its accessible recorded values', async () => {
+it('shows a clear current best and accessible values for one session', async () => {
   rpc.mockImplementation((name) =>
     Promise.resolve({
       error: null,
@@ -103,8 +111,63 @@ it('shows a one-point chart and its accessible recorded values', async () => {
       'First session recorded. Another session will show your trend.',
     ),
   ).toBeInTheDocument()
-  expect(screen.getByRole('img')).toHaveAccessibleName(
+  expect(screen.getByText('Current best')).toBeInTheDocument()
+  expect(screen.getAllByText('40 kg')).toHaveLength(2)
+  expect(screen.queryByRole('img')).not.toBeInTheDocument()
+  expect(screen.getByText('Maximum (kg)')).toBeInTheDocument()
+  expect(screen.getByText('9 Sep 2026')).toBeInTheDocument()
+})
+
+it('uses a trend chart once two sessions exist', async () => {
+  rpc.mockImplementation((name) =>
+    Promise.resolve({
+      error: null,
+      data:
+        name === 'exercise_progress'
+          ? [
+              {
+                exercise_id: 'bench',
+                exercise_name: 'Bench',
+                equipment_key: 'machine-a',
+                equipment_label: 'Gym A',
+                session_id: 'session-a',
+                completed_at: '2026-09-09T12:00:00Z',
+                value: 40,
+                metric: 'kg',
+              },
+              {
+                exercise_id: 'bench',
+                exercise_name: 'Bench',
+                equipment_key: 'machine-a',
+                equipment_label: 'Gym A',
+                session_id: 'session-b',
+                completed_at: '2026-09-14T12:00:00Z',
+                value: 42.5,
+                metric: 'kg',
+              },
+            ]
+          : [],
+    }),
+  )
+  view()
+  expect(await screen.findByRole('img')).toHaveAccessibleName(
     'Maximum kg per session. Recorded values are available below.',
   )
-  expect(screen.getByText('Maximum (kg)')).toBeInTheDocument()
+  expect(screen.getAllByText('14 Sep 2026')).not.toHaveLength(0)
+})
+
+it('formats recent workouts as UK dates and makes the whole row a link', async () => {
+  rpc.mockResolvedValue({ data: [], error: null })
+  view([
+    {
+      id: 'session-a',
+      name: 'Upper body',
+      status: 'completed',
+      started_at: '2026-09-14T11:00:00Z',
+      completed_at: '2026-09-14T12:00:00Z',
+    },
+  ])
+  const link = await screen.findByRole('link', { name: /Upper body/ })
+  expect(link).toHaveTextContent('14 Sep 2026')
+  expect(link).toHaveAttribute('href', '/sessions/session-a')
 })

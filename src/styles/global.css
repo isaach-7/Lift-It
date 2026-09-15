@@ -949,15 +949,30 @@ progress::-webkit-progress-value {
   list-style: none;
 }
 .plain-list li {
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.recent-workout-link {
   display: flex;
+  min-height: 4.5rem;
+  align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.75rem;
-  padding: 1.25rem 0;
-  border-bottom: 1px solid var(--border);
-}
-.plain-list a {
+  padding: 1rem 0;
   overflow-wrap: anywhere;
+  text-decoration: none;
+}
+
+.recent-workout-link span {
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.recent-workout-link time {
+  color: var(--muted);
 }
 .empty-state {
   color: var(--muted);
@@ -965,18 +980,15 @@ progress::-webkit-progress-value {
   line-height: 1.6;
 }
 .chart-area {
-  min-height: 240px;
+  min-height: 18rem;
   display: grid;
   align-content: center;
+  gap: 0.75rem;
 }
 .chart-area svg {
   width: 100%;
-  max-height: 300px;
+  height: 15rem;
   overflow: visible;
-}
-.chart-area text {
-  fill: var(--muted);
-  font-size: 12px;
 }
 .chart-axis {
   stroke: var(--border);
@@ -988,6 +1000,59 @@ progress::-webkit-progress-value {
 }
 .chart-dot {
   fill: var(--accent);
+}
+
+.chart-hit-area {
+  fill: transparent;
+  pointer-events: all;
+}
+
+.chart-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.current-best {
+  display: grid;
+  min-height: 13rem;
+  align-content: center;
+  margin-top: 1.5rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+}
+
+.current-best > span {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.current-best strong {
+  margin-top: 0.25rem;
+  color: var(--text);
+  font-size: clamp(2.5rem, 10vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+.current-best p {
+  margin: 1rem 0 0;
+  color: var(--muted);
+}
+
+.progress-values {
+  overflow-x: auto;
+}
+
+.progress-values caption {
+  padding: 1.25rem 0 0.25rem;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 750;
+  text-align: left;
 }
 table {
   width: 100%;
@@ -1014,6 +1079,14 @@ summary {
 }
 .action-loading {
   min-height: 56px;
+}
+
+.recent-loading {
+  display: grid;
+  min-height: 12rem;
+  align-content: start;
+  gap: 1rem;
+  padding-top: 1rem;
 }
 .field-grid {
   display: grid;
@@ -1386,6 +1459,41 @@ input[type='number'] {
 
 .app-content {
   padding-top: clamp(2rem, 6vw, 4.5rem);
+}
+
+.page-skeleton {
+  display: grid;
+  gap: 1rem;
+}
+
+.skeleton-line,
+.skeleton-card,
+.skeleton-block {
+  display: block;
+  border-radius: var(--radius-small);
+  background: color-mix(in srgb, var(--border), transparent 30%);
+}
+
+.skeleton-line {
+  width: min(100%, 28rem);
+  height: 1rem;
+}
+
+.skeleton-line-short {
+  width: 55%;
+}
+
+.skeleton-title {
+  width: min(72%, 32rem);
+  height: 3.5rem;
+}
+
+.skeleton-card {
+  min-height: 16rem;
+}
+
+.skeleton-card-short {
+  min-height: 9rem;
 }
 
 .panel {

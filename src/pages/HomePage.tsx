@@ -5,7 +5,8 @@ import { useProfile } from '../profile/profile-context.ts'
 import { encouragement, localDate, weekBounds } from '../sessions/rules.ts'
 import { sessionColumns } from '../sessions/data.ts'
 import type { SessionRow } from '../sessions/data.ts'
-import { fromKilograms, roundWeight } from '../units/weight.ts'
+import { displayWeight } from '../units/weight.ts'
+import { formatDate } from '../lib/date.ts'
 type Point = {
   exercise_id: string
   exercise_name: string
@@ -105,8 +106,8 @@ export function HomePage() {
       point.metric === 'kg'
         ? {
             ...point,
-            value: roundWeight(
-              fromKilograms(point.value, profile.preferred_weight_unit),
+            value: Number(
+              displayWeight(point.value, profile.preferred_weight_unit),
             ),
             metric: profile.preferred_weight_unit,
           }
@@ -140,8 +141,8 @@ export function HomePage() {
           {errors.days ? (
             retry('weekly progress')
           ) : days === null ? (
-            <div className="weekly-loading" role="status">
-              Loading this week...
+            <div className="weekly-loading skeleton-block" role="status">
+              <span className="sr-only">Loading this week</span>
             </div>
           ) : (
             <>
@@ -179,8 +180,8 @@ export function HomePage() {
           {errors.active ? (
             retry('active workout')
           ) : active === undefined ? (
-            <div className="action-loading" role="status">
-              Checking active workout...
+            <div className="action-loading skeleton-block" role="status">
+              <span className="sr-only">Checking active workout</span>
             </div>
           ) : (
             <Link
@@ -200,7 +201,12 @@ export function HomePage() {
           {errors.recent ? (
             retry('recent workouts')
           ) : recent === null ? (
-            <p role="status">Loading recent workouts...</p>
+            <div className="recent-loading" role="status">
+              <span className="sr-only">Loading recent workouts</span>
+              <span className="skeleton-line" />
+              <span className="skeleton-line" />
+              <span className="skeleton-line skeleton-line-short" />
+            </div>
           ) : !recent.length ? (
             <div className="empty-state">
               <h3>Your first session belongs here.</h3>
@@ -210,8 +216,15 @@ export function HomePage() {
             <ul className="plain-list">
               {recent.map((s) => (
                 <li key={s.id}>
-                  <Link to={`/sessions/${s.id}`}>{s.name}</Link>
-                  <time>{new Date(s.completed_at!).toLocaleDateString()}</time>
+                  <Link
+                    className="recent-workout-link"
+                    to={`/sessions/${s.id}`}
+                  >
+                    <span>{s.name}</span>
+                    <time dateTime={s.completed_at!}>
+                      {formatDate(s.completed_at!)}
+                    </time>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -249,10 +262,23 @@ export function HomePage() {
                   ))}
                 </select>
               </label>
-              <ProgressChart points={series} />
-              <details>
-                <summary>View recorded values</summary>
+              {series.length === 1 ? (
+                <div className="current-best">
+                  <span>Current best</span>
+                  <strong>
+                    {series[0]!.value} {series[0]!.metric}
+                  </strong>
+                  <p>
+                    First session recorded. Another session will show your
+                    trend.
+                  </p>
+                </div>
+              ) : (
+                <ProgressChart points={series} />
+              )}
+              <div className="progress-values">
                 <table>
+                  <caption>Recorded values</caption>
                   <thead>
                     <tr>
                       <th>Date</th>
@@ -262,13 +288,19 @@ export function HomePage() {
                   <tbody>
                     {series.map((p) => (
                       <tr key={p.session_id}>
-                        <td>{new Date(p.completed_at).toLocaleDateString()}</td>
-                        <td>{p.value}</td>
+                        <td>
+                          <time dateTime={p.completed_at}>
+                            {formatDate(p.completed_at)}
+                          </time>
+                        </td>
+                        <td>
+                          {p.value} {p.metric}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-              </details>
+              </div>
             </>
           )}
         </section>
@@ -286,51 +318,40 @@ function ProgressChart({ points }: { points: Point[] }) {
   const xy = points.map((p) => ({
     x:
       last === first
-        ? 300
-        : 40 +
-          ((new Date(p.completed_at).getTime() - first) / (last - first)) * 520,
-    y: 180 - ((Number(p.value) - min) / range) * 140,
+        ? 50
+        : 5 +
+          ((new Date(p.completed_at).getTime() - first) / (last - first)) * 90,
+    y: 50 - ((Number(p.value) - min) / range) * 40,
     p,
   }))
   return (
     <div className="chart-area">
       <svg
-        viewBox="0 0 600 220"
+        viewBox="0 0 100 60"
+        preserveAspectRatio="xMidYMid meet"
         role="img"
         aria-label={`Maximum ${points[0]?.metric} per session. Recorded values are available below.`}
       >
-        <line x1="40" y1="180" x2="560" y2="180" className="chart-axis" />
-        <text x="5" y="40">
-          {max}
-        </text>
-        <text x="5" y="185">
-          {min}
-        </text>
+        <line x1="5" y1="50" x2="95" y2="50" className="chart-axis" />
         <polyline
           points={xy.map((v) => `${v.x},${v.y}`).join(' ')}
           className="chart-line"
+          vectorEffect="non-scaling-stroke"
         />
         {xy.map(({ x, y, p }) => (
-          <circle key={p.session_id} cx={x} cy={y} r="5" className="chart-dot">
+          <g key={p.session_id}>
             <title>
-              {new Date(p.completed_at).toLocaleDateString()}: {p.value}{' '}
-              {p.metric}
+              {formatDate(p.completed_at)}: {p.value} {p.metric}
             </title>
-          </circle>
+            <circle cx={x} cy={y} r="4" className="chart-hit-area" />
+            <circle cx={x} cy={y} r="1.8" className="chart-dot" />
+          </g>
         ))}
-        <text x="40" y="210">
-          {points[0] && new Date(points[0].completed_at).toLocaleDateString()}
-        </text>
-        <text x="560" y="210" textAnchor="end">
-          {points.length > 1 &&
-            new Date(points.at(-1)!.completed_at).toLocaleDateString()}
-        </text>
       </svg>
-      {points.length === 1 && (
-        <p className="muted">
-          First session recorded. Another session will show your trend.
-        </p>
-      )}
+      <div className="chart-labels" aria-hidden="true">
+        <span>{formatDate(points[0]!.completed_at)}</span>
+        <span>{formatDate(points.at(-1)!.completed_at)}</span>
+      </div>
     </div>
   )
 }
