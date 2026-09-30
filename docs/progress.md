@@ -407,3 +407,14 @@
   clear of it.
 - `npm run check` passed with 122 frontend tests, all five local SQL suites,
   lint, formatting, TypeScript, and the production build.
+
+## 2026-09-30: Supabase keep-alive maintenance
+
+- Added a read-only timestamp RPC and a daily authenticated Vercel Cron endpoint
+  that calls it three times without reading or changing user data.
+- Kept the cron secret server-only, reused the publishable Supabase key and left
+  all existing table grants, Row Level Security policies and browser headers
+  unchanged.
+- `npm run check` passed with 122 frontend tests, all six local SQL suites,
+  lint, formatting, TypeScript and the production build. Hosted migration and
+  Vercel environment configuration remain deployment steps.

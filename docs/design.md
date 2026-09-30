@@ -274,6 +274,11 @@ receive the same reviewed migrations, but hosted SQL suites run inside rollback-
 only transactions before a beta merge. Production data is not copied into the
 development project.
 
+Production uses a daily Vercel Cron request authenticated by a server-only
+`CRON_SECRET` to call a read-only Supabase timestamp function three times. This
+lightweight health check reduces inactivity risk but does not guarantee that the
+free Supabase project will never be paused.
+
 Custom confirmation, recovery, password-changed and email-change messages retain
 Supabase template variables. The 12-character server-side minimum remains in
 force. Leaked-password detection is unavailable on the current plan and is
