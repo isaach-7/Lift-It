@@ -1,8 +1,9 @@
 import { Suspense, useState } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/auth-context.ts'
 import { Brand } from './Brand.tsx'
 export function Layout() {
+  const { pathname } = useLocation()
   const { client } = useAuth()
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -19,8 +20,14 @@ export function Layout() {
       setBusy(false)
     }
   }
+  const focusedWorkoutRoute =
+    /^\/workouts\/(?:new|[^/]+\/edit)$/.test(pathname) ||
+    /^\/sessions\/[^/]+$/.test(pathname)
+
   return (
-    <div className="app-shell">
+    <div
+      className={`app-shell${focusedWorkoutRoute ? ' focused-workout-route' : ''}`}
+    >
       <header className="app-header">
         <Brand to="/app" />
         <nav aria-label="Main navigation">
@@ -46,8 +53,12 @@ export function Layout() {
       <main className="app-content">
         <Suspense
           fallback={
-            <section className="panel skeleton" role="status">
-              Loading page...
+            <section className="page-skeleton" role="status">
+              <span className="sr-only">Loading page</span>
+              <span className="skeleton-line skeleton-title" />
+              <span className="skeleton-line" />
+              <div className="skeleton-card" />
+              <div className="skeleton-card skeleton-card-short" />
             </section>
           }
         >

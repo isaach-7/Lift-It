@@ -126,6 +126,9 @@ describe('live workout saves', () => {
     view()
     const reps = await screen.findByLabelText('Bench press set 1 reps')
     expect(reps).toHaveValue('')
+    await waitFor(() =>
+      expect(document.title).toBe('Upper - Active workout | LiftIt'),
+    )
     expect(screen.getByLabelText('Bench press set 1 weight in kg')).toHaveValue(
       '',
     )
@@ -336,5 +339,32 @@ describe('live workout saves', () => {
     expect(
       screen.getByRole('button', { name: 'Retry session' }),
     ).toBeInTheDocument()
+  })
+
+  it('uses completed-session metadata and a UK completion date', async () => {
+    vi.mocked(loadSession).mockResolvedValue({
+      session: {
+        id: 'session-a',
+        name: 'Upper',
+        status: 'completed',
+        started_at: '2026-09-14T11:00:00Z',
+        completed_at: '2026-09-14T12:00:00Z',
+      },
+      exercises: [exercise],
+      sets: [
+        {
+          ...set,
+          reps: 8,
+          weight: 20,
+          completed_at: '2026-09-14T12:00:00Z',
+        },
+      ],
+    })
+    view()
+    expect(await screen.findByText('Workout completed')).toBeInTheDocument()
+    expect(screen.getByText('14 Sep 2026')).toBeInTheDocument()
+    await waitFor(() =>
+      expect(document.title).toBe('Upper - Completed workout | LiftIt'),
+    )
   })
 })

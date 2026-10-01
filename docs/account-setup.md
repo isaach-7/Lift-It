@@ -17,6 +17,10 @@ Vercel. Store them as Config values because Vite intentionally exposes them in
 the browser bundle. Do not add Preview to a production value or Production to a
 development value. Neither environment needs a service-role key.
 
+Set `CRON_SECRET` to a long random value in Vercel Production under LiftIt ->
+Settings -> Environment Variables. It authenticates the daily keep-alive request,
+must remain server-only and must never use a `VITE_` prefix.
+
 ## Authentication configuration
 
 Enable Email and new signups. Keep Confirm email enabled. Set minimum password
@@ -64,6 +68,7 @@ Apply historical files once, in timestamp order:
 7. `20260910000300_allow_set_reopening.sql`
 8. `20260914000100_remove_obsolete_profile_function.sql`
 9. `20260914000200_add_fitness_data_consent.sql`
+10. `20260930000100_add_keep_alive.sql`
 
 Check hosted status before applying. The project originally used manual SQL
 Editor migrations; reconcile these exact versions with CLI migration history
@@ -84,8 +89,8 @@ migration to production.
 
 ## Verification
 
-`npm run check` runs lint, formatting, 112 unit/component tests, five SQL suites and
-a production build. The SQL harness uses PGlite with auth roles and Supabase-like
+`npm run check` runs lint, formatting, frontend tests, six SQL suites and a
+production build. The SQL harness uses PGlite with auth roles and Supabase-like
 default table grants. Also run the SQL files under `supabase/tests/` against the
 hosted project as postgres. Each creates synthetic records in a transaction and
 ends in ROLLBACK; none sends an email. On a failed SQL test, roll back before retry.

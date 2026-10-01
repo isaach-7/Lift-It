@@ -949,15 +949,30 @@ progress::-webkit-progress-value {
   list-style: none;
 }
 .plain-list li {
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.recent-workout-link {
   display: flex;
+  min-height: 4.5rem;
+  align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.75rem;
-  padding: 1.25rem 0;
-  border-bottom: 1px solid var(--border);
-}
-.plain-list a {
+  padding: 1rem 0;
   overflow-wrap: anywhere;
+  text-decoration: none;
+}
+
+.recent-workout-link span {
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.recent-workout-link time {
+  color: var(--muted);
 }
 .empty-state {
   color: var(--muted);
@@ -965,18 +980,15 @@ progress::-webkit-progress-value {
   line-height: 1.6;
 }
 .chart-area {
-  min-height: 240px;
+  min-height: 18rem;
   display: grid;
   align-content: center;
+  gap: 0.75rem;
 }
 .chart-area svg {
   width: 100%;
-  max-height: 300px;
+  height: 15rem;
   overflow: visible;
-}
-.chart-area text {
-  fill: var(--muted);
-  font-size: 12px;
 }
 .chart-axis {
   stroke: var(--border);
@@ -988,6 +1000,59 @@ progress::-webkit-progress-value {
 }
 .chart-dot {
   fill: var(--accent);
+}
+
+.chart-hit-area {
+  fill: transparent;
+  pointer-events: all;
+}
+
+.chart-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.current-best {
+  display: grid;
+  min-height: 13rem;
+  align-content: center;
+  margin-top: 1.5rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+}
+
+.current-best > span {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.current-best strong {
+  margin-top: 0.25rem;
+  color: var(--text);
+  font-size: clamp(2.5rem, 10vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+.current-best p {
+  margin: 1rem 0 0;
+  color: var(--muted);
+}
+
+.progress-values {
+  overflow-x: auto;
+}
+
+.progress-values caption {
+  padding: 1.25rem 0 0.25rem;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 750;
+  text-align: left;
 }
 table {
   width: 100%;
@@ -1014,6 +1079,14 @@ summary {
 }
 .action-loading {
   min-height: 56px;
+}
+
+.recent-loading {
+  display: grid;
+  min-height: 12rem;
+  align-content: start;
+  gap: 1rem;
+  padding-top: 1rem;
 }
 .field-grid {
   display: grid;
@@ -1235,6 +1308,7 @@ input[type='number'] {
   align-items: center;
   gap: 0.65rem;
   width: max-content;
+  min-height: 2.75rem;
   color: var(--text);
   font-size: 1.45rem;
   font-weight: 850;
@@ -1386,6 +1460,41 @@ input[type='number'] {
 
 .app-content {
   padding-top: clamp(2rem, 6vw, 4.5rem);
+}
+
+.page-skeleton {
+  display: grid;
+  gap: 1rem;
+}
+
+.skeleton-line,
+.skeleton-card,
+.skeleton-block {
+  display: block;
+  border-radius: var(--radius-small);
+  background: color-mix(in srgb, var(--border), transparent 30%);
+}
+
+.skeleton-line {
+  width: min(100%, 28rem);
+  height: 1rem;
+}
+
+.skeleton-line-short {
+  width: 55%;
+}
+
+.skeleton-title {
+  width: min(72%, 32rem);
+  height: 3.5rem;
+}
+
+.skeleton-card {
+  min-height: 16rem;
+}
+
+.skeleton-card-short {
+  min-height: 9rem;
 }
 
 .panel {
@@ -1809,6 +1918,31 @@ input[type='number'] {
   color: var(--accent);
 }
 
+.exercise-library-panel {
+  padding-bottom: 5rem;
+}
+
+.exercise-library-controls {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  margin: 0 calc(clamp(1rem, 3vw, 1.75rem) * -1) 1rem;
+  padding: 0.75rem clamp(1rem, 3vw, 1.75rem) 0.25rem;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface), transparent 3%);
+  backdrop-filter: blur(12px);
+}
+
+.exercise-library-controls .muscle-filters {
+  margin-top: 0.75rem;
+  margin-bottom: 0;
+}
+
+.load-more-exercises {
+  width: 100%;
+  margin-top: 1rem;
+}
+
 .save-bar {
   position: sticky;
   bottom: 4.25rem;
@@ -1925,9 +2059,51 @@ input[type='number'] {
 
 @media (max-width: 42rem) {
   .app-header .sign-out-button {
-    min-height: 2.5rem;
+    min-height: 2.75rem;
     padding: 0.45rem 0.65rem;
     font-size: 0.8rem;
+  }
+
+  .focused-workout-route {
+    padding-bottom: 0;
+  }
+
+  .focused-workout-route .app-header nav {
+    display: none;
+  }
+
+  .focused-workout-route .app-content {
+    padding-bottom: 0;
+  }
+
+  .focused-workout-route .save-bar {
+    bottom: 0;
+    margin-top: 4rem;
+  }
+
+  .focused-workout-route .editor-save-bar {
+    margin-top: 1rem;
+  }
+
+  .save-bar {
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom));
+  }
+
+  .save-bar > button,
+  .save-bar > button:first-child {
+    min-width: 0;
+    flex: 1 1 0;
+    padding-inline: 0.65rem;
+    font-size: 0.875rem;
+  }
+
+  .editor-save-bar > span {
+    flex: 0 0 auto;
+    color: var(--muted);
+    font-size: 0.75rem;
+    white-space: nowrap;
   }
 
   .app-header nav {
@@ -2002,6 +2178,11 @@ input[type='number'] {
     grid-template-columns:
       1.4rem minmax(7.2rem, 1.3fr) minmax(3.25rem, 0.7fr)
       minmax(3.25rem, 0.8fr) 2.25rem;
+  }
+
+  .save-bar > button,
+  .save-bar > button:first-child {
+    font-size: 0.8rem;
   }
 }
 
@@ -2085,6 +2266,13 @@ input[type='number'] {
   font-size: 0.875rem;
 }
 
+.landing-visual {
+  position: relative;
+  width: min(100%, 34rem);
+  justify-self: center;
+  padding-bottom: 5.5rem;
+}
+
 .landing-image {
   width: min(100%, 34rem);
   aspect-ratio: 4 / 5;
@@ -2100,6 +2288,64 @@ input[type='number'] {
   height: 100%;
   display: block;
   object-fit: cover;
+}
+
+.product-preview {
+  position: absolute;
+  right: -0.75rem;
+  bottom: 0;
+  width: min(calc(100% - 1.5rem), 25rem);
+  padding: 1rem;
+  border: 1px solid #39433d;
+  border-radius: var(--radius);
+  color: #ffffff;
+  background: #101713;
+  box-shadow: 0 1.25rem 3rem rgb(0 0 0 / 28%);
+}
+
+.product-preview-heading,
+.product-preview-set {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.product-preview-heading > div {
+  display: grid;
+}
+
+.product-preview-heading span,
+.product-preview p {
+  color: #c8d0ca;
+  font-size: 0.75rem;
+}
+
+.product-preview-heading strong {
+  font-size: 1.15rem;
+}
+
+.product-preview-set {
+  margin-top: 0.85rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-small);
+  background: #202a24;
+  font-size: 0.8rem;
+}
+
+.preview-check {
+  padding: 0.35rem 0.5rem;
+  border-radius: 999px;
+  color: #101713;
+  background: #b9f677;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.product-preview p {
+  margin: 0.75rem 0 0;
+  color: #b9f677;
+  font-weight: 750;
 }
 
 .landing-features {
@@ -2217,6 +2463,19 @@ input[type='number'] {
   font-weight: 750;
 }
 
+.register-privacy {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.register-privacy a {
+  color: var(--accent);
+  font-weight: 700;
+}
+
 @media (min-width: 50rem) {
   .landing-hero {
     grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
@@ -2244,9 +2503,31 @@ input[type='number'] {
     aspect-ratio: 16 / 11;
   }
 
+  .landing-visual {
+    padding-bottom: 0;
+  }
+
+  .product-preview {
+    position: relative;
+    right: auto;
+    width: calc(100% - 1.5rem);
+    margin: -2.5rem auto 0;
+  }
+
   .public-footer {
     align-items: flex-start;
     flex-direction: column;
     padding: 2rem 0;
+  }
+}
+
+@media (max-width: 23rem) {
+  .landing-copy h1 {
+    font-size: 2.35rem;
+  }
+
+  .product-preview-set {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 }

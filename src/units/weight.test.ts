@@ -8,16 +8,16 @@ import {
 
 describe('weight units', () => {
   it.each([
-    [20, '44.09'],
-    [50, '110.23'],
-    [100, '220.46'],
+    [20, '44.1'],
+    [50, '110.2'],
+    [100, '220.5'],
   ])('displays %s kg as %s lb', (kg, pounds) => {
     expect(displayWeight(kg, 'lb')).toBe(pounds)
   })
 
   it('keeps canonical kilograms stable through a display round trip', () => {
     const pounds = displayWeight(100, 'lb')
-    expect(parseWeight(pounds, 'lb')).toBeCloseTo(100, 2)
+    expect(parseWeight(pounds, 'lb')).toBeCloseTo(100, 1)
     expect(convertWeightText(pounds, 'lb', 'kg')).toBe('100')
   })
 

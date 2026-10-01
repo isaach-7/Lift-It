@@ -30,7 +30,7 @@
       ]
     },
     {
-      "source": "/((?!robots\\.txt$|sitemap\\.xml$|favicon\\.svg$|auth-strength-training\\.webp$|exercise-images/|assets/).+)",
+      "source": "/((?!robots\\.txt$|sitemap\\.xml$|favicon\\.svg$|apple-touch-icon\\.png$|site\\.webmanifest$|auth-strength-training\\.webp$|exercise-images/|assets/).+)",
       "headers": [
         {
           "key": "X-Robots-Tag",
@@ -48,5 +48,6 @@
       ]
     }
   ],
+  "crons": [{ "path": "/api/keep-alive", "schedule": "0 9 * * *" }],
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
