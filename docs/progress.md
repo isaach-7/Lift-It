@@ -438,3 +438,11 @@
   and reps, completion click, saving feedback and the next suggested weight.
 - Added pause/replay controls and static reduced-motion behavior, with interaction
   tests. The preview remains isolated from authentication and workout writes.
+
+## 2026-11-13 - Geometric and slab typography
+
+- Paired self-hosted Barlow interface type with Roboto Slab primary headings as
+  available alternatives to the requested commercial fonts (issue #20).
+- Kept the forest-green identity, softened light surfaces and charcoal text,
+  and tightened figure/unit spacing without non-ASCII whitespace.
+- Preserved third-party licenses and used WOFF2 with swap/system fallbacks.
