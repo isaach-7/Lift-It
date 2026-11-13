@@ -369,3 +369,13 @@ original licenses, so no font service is required during a workout. Font display
 uses swap and system fallbacks. Light text is charcoal on off-white; dark theme
 contrast remains intact. Weight/unit pairs use compact CSS spacing without
 invisible Unicode. Case-sensitive forms are requested where supported by a font.
+
+## Progression-first presentation
+
+Use Roboto Slab throughout the interface, including controls and training figures.
+Use square corners on surfaces and controls. The public header action is Start
+training, and the homepage leads with automatic weight suggestions based on the
+chosen rep range. The walkthrough loops with a hold on the recommendation and
+no replay button or explanatory footer. A compact pause control remains available
+for continuous motion, and reduced-motion users see the final state. Accessible
+example context stays available to screen readers without visible narration.

@@ -140,11 +140,11 @@ describe('account foundation', () => {
     renderApp('/')
     expect(
       screen.getByRole('heading', {
-        name: 'Your training. Set by set.',
+        name: 'Your next weight. Worked out.',
       }),
     ).toBeInTheDocument()
     expect(
-      screen.getAllByRole('link', { name: 'Create account' }),
+      screen.getAllByRole('link', { name: 'Start training' }),
     ).not.toHaveLength(0)
     expect(screen.getAllByRole('link', { name: 'Sign in' })).not.toHaveLength(0)
   })

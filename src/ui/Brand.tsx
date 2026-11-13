@@ -14,7 +14,7 @@ export function Brand({ to = '/' }: { to?: string }) {
 export function BrandMark() {
   return (
     <svg className="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
-      <rect x="2" y="2" width="28" height="28" rx="9" />
+      <rect x="2" y="2" width="28" height="28" rx="0" />
       <path d="M9 20V12M23 20V12M9 16H23M16 21V9M12.5 12.5 16 9l3.5 3.5" />
     </svg>
   )

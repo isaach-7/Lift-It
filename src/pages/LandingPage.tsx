@@ -23,7 +23,7 @@ export function LandingPage() {
                 Sign in
               </Link>
               <Link className="button-link" to="/register">
-                Create account
+                Start training
               </Link>
             </>
           )}
@@ -32,14 +32,14 @@ export function LandingPage() {
       <main>
         <section className="landing-hero">
           <div className="landing-copy">
-            <h1>Your training. Set by set.</h1>
+            <h1>Your next weight. Worked out.</h1>
             <p className="intro">
-              Build routines, log each set while you train, and follow clear
-              weight suggestions based on the rep range you choose.
+              Log your reps. LiftIt suggests the next weight automatically,
+              using your rep range and the equipment you train with.
             </p>
             <div className="landing-actions">
               <Link className="button-link" to="/register">
-                Create account
+                Start training
               </Link>
               <Link className="button-link secondary-button" to="/login">
                 Sign in
@@ -64,7 +64,7 @@ export function LandingPage() {
         </section>
         <section className="landing-features" aria-labelledby="features-title">
           <div className="section-heading">
-            <h2 id="features-title">Build. Log. Repeat.</h2>
+            <h2 id="features-title">Progression built into every set.</h2>
           </div>
           <div className="feature-grid">
             <article>
@@ -85,7 +85,7 @@ export function LandingPage() {
             </article>
             <article>
               <span>03</span>
-              <h3>See what comes next</h3>
+              <h3>Automatic weight progression</h3>
               <p>
                 Set a 6-10 rep range and a 2.5 kg increment. Log 11 reps at 20
                 kg and LiftIt suggests 22.5 kg next; log 8 and it stays at 20
@@ -97,7 +97,6 @@ export function LandingPage() {
       </main>
       <footer className="public-footer">
         <Brand />
-        <p>Workout tracking, built for the gym.</p>
         <nav aria-label="Legal and support">
           <Link to="/privacy">Privacy</Link>
           <a href="mailto:support@lift-it.site">support@lift-it.site</a>

@@ -1,22 +1,8 @@
 @font-face {
-  font-family: 'Barlow';
-  src: url('/fonts/barlow-latin-400-normal.woff2') format('woff2');
+  font-family: 'Roboto Slab';
+  src: url('/fonts/roboto-slab-latin-400-normal.woff2') format('woff2');
   font-style: normal;
   font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Barlow';
-  src: url('/fonts/barlow-latin-500-normal.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Barlow';
-  src: url('/fonts/barlow-latin-600-normal.woff2') format('woff2');
-  font-style: normal;
-  font-weight: 600;
   font-display: swap;
 }
 @font-face {
@@ -36,7 +22,7 @@
 /* Solid surfaces keep the workout controls visually dominant in both themes. */
 :root {
   font-family:
-    Barlow,
+    'Roboto Slab',
     ui-sans-serif,
     system-ui,
     -apple-system,
@@ -126,7 +112,7 @@ a {
   min-width: 0;
   padding: clamp(1.5rem, 5vw, 3.5rem);
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: 0;
   background: var(--surface);
 }
 
@@ -170,7 +156,7 @@ h1 {
   width: 0.625rem;
   height: 0.625rem;
   flex: 0 0 auto;
-  border-radius: 50%;
+  border-radius: 0;
   background: var(--accent);
   box-shadow: 0 0 0 0.25rem rgb(185 246 119 / 10%);
 }
@@ -186,7 +172,7 @@ h1 {
 }
 
 .text-link:focus-visible {
-  border-radius: 0.25rem;
+  border-radius: 0;
   outline: 0.2rem solid var(--accent);
   outline-offset: 0.2rem;
 }
@@ -230,14 +216,14 @@ h1 {
   color: var(--text);
   background: var(--canvas);
   border: 1px solid var(--input-border);
-  border-radius: 0.5rem;
+  border-radius: 0;
 }
 
 button {
   min-height: 3rem;
   padding: 0.75rem 1rem;
   border: 1px solid transparent;
-  border-radius: 0.5rem;
+  border-radius: 0;
   color: var(--canvas);
   background: var(--accent);
   font-weight: 600;
@@ -318,7 +304,7 @@ input:focus-visible {
 .empty-workouts {
   padding: 1.25rem;
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: 0;
   background: var(--canvas);
 }
 
@@ -351,7 +337,7 @@ input:focus-visible {
   min-width: 0;
   min-height: 3rem;
   border: 1px solid var(--input-border);
-  border-radius: 0.5rem;
+  border-radius: 0;
   padding: 0.75rem;
   background: var(--surface);
   color: var(--text);
@@ -408,7 +394,7 @@ input:focus-visible {
 .skeleton-row {
   height: 6rem;
   margin-top: 1rem;
-  border-radius: 0.75rem;
+  border-radius: 0;
   background: var(--border);
 }
 
@@ -427,7 +413,7 @@ input:focus-visible {
   min-height: 4rem;
   overflow: hidden;
   border: 1px solid var(--border);
-  border-radius: 0.625rem;
+  border-radius: 0;
   background: var(--surface);
 }
 
@@ -463,7 +449,7 @@ input:focus-visible {
   margin: 1.25rem -0.5rem -0.5rem;
   padding: 1rem;
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: 0;
   background: var(--surface);
 }
 
@@ -512,7 +498,7 @@ input:focus-visible {
   min-height: 3rem;
   padding: 0.75rem;
   border: 1px solid var(--input-border);
-  border-radius: 0.5rem;
+  border-radius: 0;
   color: var(--text);
   background: var(--canvas);
 }
@@ -568,7 +554,7 @@ input:focus-visible {
   min-width: 0;
   overflow: hidden;
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: 0;
   background: var(--canvas);
 }
 
@@ -637,7 +623,7 @@ input:focus-visible {
   max-width: 6.5rem;
   padding: 0.3rem 0.45rem;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 0;
   color: var(--text);
   background: var(--canvas);
   font-size: 0.625rem;
@@ -661,7 +647,7 @@ input:focus-visible {
 
 .muscle-tags span {
   padding: 0.3rem 0.5rem;
-  border-radius: 8px;
+  border-radius: 0;
   color: var(--text);
   background: var(--canvas);
   font-size: 0.6875rem;
@@ -705,7 +691,7 @@ input:focus-visible {
   min-height: 12rem;
   padding: 2rem 1rem;
   border: 1px dashed var(--border);
-  border-radius: 0.75rem;
+  border-radius: 0;
   text-align: center;
 }
 
@@ -798,7 +784,7 @@ select {
   min-height: 44px;
   padding: 0.65rem;
   border: 1px solid var(--input-border);
-  border-radius: 0.4rem;
+  border-radius: 0;
   background: var(--canvas);
   color: var(--text);
 }
@@ -869,7 +855,7 @@ input[type='checkbox'] {
   padding: 0.85rem;
   text-decoration: none;
   color: var(--muted);
-  border-radius: 0.4rem;
+  border-radius: 0;
 }
 .app-header nav a.active {
   color: var(--text);
@@ -882,7 +868,7 @@ input[type='checkbox'] {
 .panel {
   border: 1px solid var(--border);
   background: var(--surface);
-  border-radius: 0.65rem;
+  border-radius: 0;
   padding: clamp(1rem, 3vw, 1.75rem);
   margin-top: 1.5rem;
   min-width: 0;
@@ -903,7 +889,7 @@ input[type='checkbox'] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.45rem;
+  border-radius: 0;
   padding: 0.8rem 1.2rem;
   text-decoration: none;
   font-weight: 600;
@@ -941,11 +927,11 @@ progress {
 }
 progress::-webkit-progress-bar {
   background: var(--border);
-  border-radius: 5px;
+  border-radius: 0;
 }
 progress::-webkit-progress-value {
   background: var(--accent);
-  border-radius: 5px;
+  border-radius: 0;
 }
 .week-strip {
   display: grid;
@@ -965,7 +951,7 @@ progress::-webkit-progress-value {
   place-items: center;
   height: 2.5rem;
   border: 1px solid var(--border);
-  border-radius: 0.4rem;
+  border-radius: 0;
   font-weight: 500;
 }
 .day.done strong {
@@ -1056,7 +1042,7 @@ progress::-webkit-progress-value {
   align-content: center;
   margin-top: 1.5rem;
   padding: clamp(1.25rem, 4vw, 2rem);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: var(--accent-soft);
 }
 
@@ -1223,7 +1209,7 @@ summary {
   max-width: 480px;
   background: var(--canvas);
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  border-radius: 0;
 }
 .machine-preview svg {
   width: 100%;
@@ -1292,9 +1278,9 @@ fieldset {
   --surface-muted: #eeeeed;
   --accent-soft: #dff0e3;
   --shadow: 0 18px 50px rgb(32 40 35 / 8%);
-  --radius-small: 0.55rem;
-  --radius: 1rem;
-  --radius-large: 1.5rem;
+  --radius-small: 0;
+  --radius: 0;
+  --radius-large: 0;
 }
 
 :root[data-theme='dark'] {
@@ -1461,7 +1447,7 @@ input[type='number'] {
 
 .auth-form input {
   min-height: 3.35rem;
-  border-radius: var(--radius-small);
+  border-radius: 0;
   background: var(--surface-muted);
 }
 
@@ -1481,7 +1467,7 @@ input[type='number'] {
 }
 
 .app-header nav a {
-  border-radius: 8px;
+  border-radius: 0;
   font-weight: 600;
 }
 
@@ -1504,7 +1490,7 @@ input[type='number'] {
 .skeleton-card,
 .skeleton-block {
   display: block;
-  border-radius: var(--radius-small);
+  border-radius: 0;
   background: color-mix(in srgb, var(--border), transparent 30%);
 }
 
@@ -1532,7 +1518,7 @@ input[type='number'] {
 
 .panel {
   border: 0;
-  border-radius: var(--radius);
+  border-radius: 0;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--border), transparent 38%);
 }
 
@@ -1622,7 +1608,7 @@ input[type='number'] {
   flex: 0 0 auto;
   padding: 0.2rem;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 0;
   background: var(--surface-muted);
 }
 
@@ -1631,7 +1617,7 @@ input[type='number'] {
   min-height: 2.35rem;
   padding: 0.35rem 0.7rem;
   border: 0;
-  border-radius: 8px;
+  border-radius: 0;
   color: var(--muted);
   background: transparent;
   font-size: 0.875rem;
@@ -1733,7 +1719,7 @@ input[type='number'] {
 .exercise-log-heading > span {
   max-width: 12rem;
   padding: 0.35rem 0.6rem;
-  border-radius: 8px;
+  border-radius: 0;
   color: var(--muted);
   background: var(--surface-muted);
   font-size: 0.75rem;
@@ -1790,7 +1776,7 @@ input[type='number'] {
 .live-set .set-row {
   min-height: 4rem;
   padding: 0.4rem;
-  border-radius: 0.75rem;
+  border-radius: 0;
   background: var(--surface-muted);
 }
 
@@ -1828,7 +1814,7 @@ input[type='number'] {
   min-height: 3rem;
   padding: 0.45rem 0.3rem;
   border-color: transparent;
-  border-radius: var(--radius-small);
+  border-radius: 0;
   color: var(--text);
   background: var(--surface);
   font-size: 1.05rem;
@@ -1851,7 +1837,7 @@ input[type='number'] {
   place-items: center;
   padding: 0;
   border: 2px solid var(--input-border);
-  border-radius: 50%;
+  border-radius: 0;
   color: var(--on-accent);
   background: transparent;
 }
@@ -1878,7 +1864,7 @@ input[type='number'] {
 .saving-dot {
   width: 0.55rem;
   height: 0.55rem;
-  border-radius: 50%;
+  border-radius: 0;
   background: var(--accent);
   animation: saving-pulse 0.8s ease-in-out infinite alternate;
 }
@@ -1919,7 +1905,7 @@ input[type='number'] {
   min-height: 2.25rem;
   padding: 0.35rem 0.65rem;
   border-color: var(--border);
-  border-radius: 8px;
+  border-radius: 0;
   color: var(--muted);
   background: transparent;
   font-size: 0.75rem;
@@ -1980,7 +1966,7 @@ input[type='number'] {
   width: min(calc(100% - 2rem), 30rem);
   padding: clamp(1.25rem, 5vw, 2rem);
   border: 0;
-  border-radius: var(--radius-large);
+  border-radius: 0;
   color: var(--text);
   background: var(--surface);
   box-shadow: 0 2rem 6rem rgb(0 0 0 / 28%);
@@ -2016,7 +2002,7 @@ input[type='number'] {
 
 .routine-exercise .set-table {
   padding: 0.5rem;
-  border-radius: var(--radius);
+  border-radius: 0;
   background: var(--surface-muted);
 }
 
@@ -2128,7 +2114,7 @@ input[type='number'] {
   }
 
   .app-header nav a {
-    border-radius: 0.45rem;
+    border-radius: 0;
   }
 
   .session-header {
@@ -2295,7 +2281,7 @@ input[type='number'] {
   aspect-ratio: 4 / 5;
   justify-self: center;
   overflow: hidden;
-  border-radius: var(--radius-large);
+  border-radius: 0;
   background: var(--surface-muted);
   box-shadow: var(--shadow);
 }
@@ -2314,7 +2300,7 @@ input[type='number'] {
   width: min(calc(100% - 1.5rem), 25rem);
   padding: 1rem;
   border: 1px solid #39433d;
-  border-radius: var(--radius);
+  border-radius: 0;
   color: #ffffff;
   background: #191b1d;
   box-shadow: 0 1.25rem 3rem rgb(0 0 0 / 28%);
@@ -2345,14 +2331,14 @@ input[type='number'] {
 .product-preview-set {
   margin-top: 0.85rem;
   padding: 0.75rem;
-  border-radius: var(--radius-small);
+  border-radius: 0;
   background: #202a24;
   font-size: 0.8rem;
 }
 
 .preview-check {
   padding: 0.35rem 0.5rem;
-  border-radius: 8px;
+  border-radius: 0;
   color: #191b1d;
   background: #b8dfc3;
   font-size: 0.7rem;
@@ -2390,7 +2376,7 @@ input[type='number'] {
   min-height: 15rem;
   padding: clamp(1.25rem, 4vw, 2rem);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 0;
   background: var(--surface);
 }
 
@@ -2465,7 +2451,7 @@ input[type='number'] {
   gap: 0.75rem;
   padding: 1rem;
   border: 1px solid var(--input-border);
-  border-radius: var(--radius-small);
+  border-radius: 0;
   background: var(--surface-muted);
   font-weight: 500;
   line-height: 1.5;
@@ -2551,9 +2537,9 @@ input[type='number'] {
 
 /* Training log: consistent spacing, quiet surfaces and readable figures. */
 :root {
-  --radius-small: 8px;
-  --radius: 12px;
-  --radius-large: 16px;
+  --radius-small: 0;
+  --radius: 0;
+  --radius-large: 0;
   --shadow: none;
 }
 h1,
@@ -2566,7 +2552,7 @@ button,
 input,
 select,
 .button-link {
-  border-radius: 8px;
+  border-radius: 0;
 }
 button,
 .button-link {
@@ -2655,14 +2641,14 @@ button,
 .landing-image {
   width: 100%;
   aspect-ratio: 16 / 7;
-  border-radius: 12px;
+  border-radius: 0;
 }
 .product-preview {
   position: static;
   width: 100%;
   margin: 0;
   padding: 24px;
-  border-radius: 12px;
+  border-radius: 0;
   box-shadow: none;
   font-variant-numeric: tabular-nums;
 }
@@ -2684,7 +2670,7 @@ button,
 }
 .preview-check {
   font-size: 12px;
-  border-radius: 4px;
+  border-radius: 0;
   padding: 4px 8px;
   animation: example-save 4s ease both;
 }
@@ -2791,7 +2777,7 @@ button,
   color: #fff;
   padding: 16px 24px;
   border: 0;
-  border-radius: 0 0 12px 12px;
+  border-radius: 0;
 }
 .public-header .brand,
 .app-header .brand,
@@ -2832,7 +2818,7 @@ button,
 .walkthrough {
   overflow: hidden;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 0;
   background: var(--surface);
   box-shadow: 0 8px 24px rgb(0 0 0 / 8%);
   font-variant-numeric: tabular-nums;
@@ -2890,14 +2876,14 @@ button,
   padding: 8px;
   min-height: 64px;
   background: var(--surface-muted);
-  border-radius: 8px;
+  border-radius: 0;
 }
 .demo-input {
   display: grid;
   place-items: center;
   height: 48px;
   border: 1px solid var(--input-border);
-  border-radius: 8px;
+  border-radius: 0;
   background: var(--surface);
   font-size: 18px;
 }
@@ -2919,7 +2905,7 @@ button,
   height: 48px;
   justify-self: center;
   border: 2px solid var(--input-border);
-  border-radius: 50%;
+  border-radius: 0;
   font-size: 11px;
 }
 .demo-click {
@@ -3039,4 +3025,35 @@ h1,
 }
 .weekly-score {
   gap: 4px;
+}
+
+.walkthrough-bar {
+  align-items: center;
+  min-height: 64px;
+}
+.demo-pause {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  min-height: 36px;
+  padding: 8px;
+  color: #fff;
+  background: transparent;
+  border: 1px solid #84a690;
+}
+.demo-pause svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+.demo-feedback {
+  font-weight: 500;
+}
+.demo-next.demo-progressed {
+  opacity: 1;
+  border-left: 4px solid var(--accent);
+}
+.demo-progressed .demo-input:first-of-type {
+  color: var(--accent);
+  font-weight: 600;
 }

@@ -16,10 +16,10 @@ export function WorkoutWalkthrough() {
     return () => media.removeEventListener('change', update)
   }, [])
   useEffect(() => {
-    if (paused || reduced || step === 9) return
+    if (paused || reduced) return
     const timer = window.setTimeout(
-      () => setStep(step + 1),
-      step === 0 ? 1000 : 700,
+      () => setStep(step === 9 ? 0 : step + 1),
+      step === 9 ? 3200 : step === 0 ? 1000 : 700,
     )
     return () => window.clearTimeout(timer)
   }, [step, paused, reduced])
@@ -30,7 +30,22 @@ export function WorkoutWalkthrough() {
     <section className="walkthrough" aria-label="Workout demonstration">
       <header className="walkthrough-bar">
         <strong>LiftIt</strong>
-        <span>Example workout</span>
+        {!reduced && (
+          <button
+            className="demo-pause"
+            type="button"
+            aria-label={paused ? 'Play animation' : 'Pause animation'}
+            onClick={() => setPaused(!paused)}
+          >
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              {paused ? (
+                <path d="M4 2 14 8 4 14Z" />
+              ) : (
+                <path d="M3 2h3v12H3zM10 2h3v12h-3z" />
+              )}
+            </svg>
+          </button>
+        )}
       </header>
       <div className="walkthrough-body">
         <div className="walkthrough-title">
@@ -73,15 +88,12 @@ export function WorkoutWalkthrough() {
           )}
         </div>
         <p className="demo-feedback" aria-hidden="true">
-          {saved
-            ? 'Set saved / Next weight: 22.5 kg'
-            : step === 8
-              ? 'Saving set...'
-              : step >= 4
-                ? 'Enter reps, then complete the set'
-                : 'Enter the weight you lifted'}
+          {saved ? 'Next set: 22.5 kg' : step === 8 ? 'Saving set...' : ''}
         </p>
-        <div className="demo-columns demo-row demo-next" aria-hidden="true">
+        <div
+          className={`demo-columns demo-row demo-next ${saved ? 'demo-progressed' : ''}`}
+          aria-hidden="true"
+        >
           <span>2</span>
           <span className="demo-input">{saved ? '22.5' : ''}</span>
           <span className="demo-input" />
@@ -93,23 +105,6 @@ export function WorkoutWalkthrough() {
           target.
         </p>
       </div>
-      <footer className="walkthrough-controls">
-        <span>Workout walkthrough</span>
-        {!reduced && (
-          <button
-            type="button"
-            className="secondary-button"
-            onClick={() => {
-              if (saved) {
-                setStep(0)
-                setPaused(false)
-              } else setPaused(!paused)
-            }}
-          >
-            {saved ? 'Replay demo' : paused ? 'Play demo' : 'Pause demo'}
-          </button>
-        )}
-      </footer>
     </section>
   )
 }
