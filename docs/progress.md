@@ -429,3 +429,12 @@
 - Kept workout persistence, progression and account behavior unchanged.
 - Browser verification remains outstanding because browser access was declined.
   The implementation was reviewed against source and the existing screenshot.
+
+## 2026-11-13 - Header consistency and workout walkthrough
+
+- Unified public and private headers around forest green, white navigation and a
+  single pale-green accent family. Removed the isolated wordmark letter colour.
+- Replaced the fading preview with a labelled cursor demonstration: typed weight
+  and reps, completion click, saving feedback and the next suggested weight.
+- Added pause/replay controls and static reduced-motion behavior, with interaction
+  tests. The preview remains isolated from authentication and workout writes.

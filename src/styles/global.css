@@ -30,7 +30,7 @@
   --muted: #b7babd;
   --border: #44474a;
   --input-border: #738578;
-  --accent: #a8dbb4;
+  --accent: #b8dfc3;
   --on-accent: #17211a;
   --error: #ffb1a8;
   color-scheme: dark;
@@ -43,7 +43,7 @@
     --muted: #b7babd;
     --border: #44474a;
     --input-border: #738578;
-    --accent: #a8dbb4;
+    --accent: #b8dfc3;
     --on-accent: #17211a;
     --error: #ffb1a8;
     color-scheme: dark;
@@ -1328,7 +1328,7 @@ input[type='number'] {
 
 .brand-mark path {
   fill: none;
-  stroke: #b9f677;
+  stroke: #b8dfc3;
   stroke-width: 2.2;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -1393,7 +1393,7 @@ input[type='number'] {
 }
 
 .auth-visual-copy strong {
-  color: #b9f677;
+  color: #b8dfc3;
 }
 
 .auth-panel {
@@ -1548,7 +1548,7 @@ input[type='number'] {
 }
 
 .weekly-score .large-number {
-  color: #b9f677;
+  color: #b8dfc3;
   font-size: clamp(3.5rem, 10vw, 5.5rem);
   line-height: 1;
 }
@@ -1563,7 +1563,7 @@ input[type='number'] {
 }
 
 .workout-focus progress::-webkit-progress-value {
-  background: #b9f677;
+  background: #b8dfc3;
 }
 
 .workout-focus .day strong {
@@ -1571,14 +1571,14 @@ input[type='number'] {
 }
 
 .workout-focus .day.done strong {
-  border-color: #b9f677;
+  border-color: #b8dfc3;
   color: #191b1d;
-  background: #b9f677;
+  background: #b8dfc3;
 }
 
 .workout-focus .primary-workout {
   color: #191b1d;
-  background: #b9f677;
+  background: #b8dfc3;
 }
 
 .unit-toggle {
@@ -2319,14 +2319,14 @@ input[type='number'] {
   padding: 0.35rem 0.5rem;
   border-radius: 8px;
   color: #191b1d;
-  background: #b9f677;
+  background: #b8dfc3;
   font-size: 0.7rem;
   font-weight: 600;
 }
 
 .product-preview p {
   margin: 0.75rem 0 0;
-  color: #b9f677;
+  color: #b8dfc3;
   font-weight: 600;
 }
 
@@ -2746,5 +2746,230 @@ button,
   .preview-reps,
   .preview-next {
     animation: none;
+  }
+}
+
+/* One brand surface across public and private navigation. */
+.public-header,
+.app-header {
+  background: #173e2b;
+  color: #fff;
+  padding: 16px 24px;
+  border: 0;
+  border-radius: 0 0 12px 12px;
+}
+.public-header .brand,
+.app-header .brand,
+.public-header .public-sign-in,
+.app-header nav a,
+.app-header .sign-out-button {
+  color: #fff;
+}
+.public-header .brand-rise,
+.app-header .brand-rise {
+  color: inherit;
+}
+.public-header .button-link,
+.app-header nav a.active {
+  background: #b8dfc3;
+  color: #173e2b;
+}
+.app-header .sign-out-button {
+  border-color: #84a690;
+  background: transparent;
+}
+.brand-rise {
+  color: inherit;
+}
+.brand-mark rect {
+  fill: #173e2b;
+}
+.brand-mark path {
+  stroke: #b8dfc3;
+}
+.public-header .brand-mark rect,
+.app-header .brand-mark rect {
+  fill: #28543c;
+}
+.landing-copy h1 {
+  color: var(--accent);
+}
+.walkthrough {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 8%);
+  font-variant-numeric: tabular-nums;
+}
+.walkthrough-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: #173e2b;
+  color: white;
+}
+.walkthrough-bar span {
+  color: #d4e6da;
+  font-size: 14px;
+}
+.walkthrough-body {
+  padding: 24px;
+}
+.walkthrough-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.walkthrough-title h2 {
+  margin: 0;
+  font-size: 28px;
+}
+.walkthrough-title > span {
+  color: var(--muted);
+  font-size: 14px;
+}
+.walkthrough-body h3 {
+  margin: 24px 0 8px;
+  font-size: 20px;
+}
+.walkthrough-body > .muted {
+  margin: 0 0 20px;
+  font-size: 14px;
+}
+.demo-columns {
+  display: grid;
+  grid-template-columns: 0.6fr 1fr 1fr 0.8fr;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.demo-labels {
+  padding: 0 8px 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.demo-row {
+  position: relative;
+  padding: 8px;
+  min-height: 64px;
+  background: var(--surface-muted);
+  border-radius: 8px;
+}
+.demo-input {
+  display: grid;
+  place-items: center;
+  height: 48px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 18px;
+}
+.demo-focused {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.demo-focused::after {
+  content: '';
+  position: absolute;
+  height: 20px;
+  border-right: 1px solid var(--text);
+  margin-left: 28px;
+}
+.demo-complete {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  justify-self: center;
+  border: 2px solid var(--input-border);
+  border-radius: 50%;
+  font-size: 11px;
+}
+.demo-click {
+  transform: scale(0.92);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.demo-saved .demo-complete {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+}
+.demo-saved {
+  background: var(--accent-soft);
+}
+.demo-cursor {
+  position: absolute;
+  width: 24px;
+  height: 32px;
+  top: 36px;
+  fill: #fff;
+  stroke: #173e2b;
+  stroke-width: 2px;
+  z-index: 1;
+  transition:
+    left 450ms ease,
+    transform 160ms ease;
+  pointer-events: none;
+}
+.cursor-weight {
+  left: 35%;
+}
+.cursor-reps {
+  left: 64%;
+}
+.cursor-done {
+  left: 88%;
+  transform: scale(0.9);
+}
+.demo-feedback {
+  min-height: 48px;
+  margin: 0;
+  padding: 12px 0;
+  color: var(--accent);
+  font-size: 13px;
+}
+.demo-next {
+  opacity: 0.7;
+}
+.walkthrough-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 64px;
+  padding: 8px 24px;
+  border-top: 1px solid var(--border);
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.walkthrough-controls button {
+  min-height: 40px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+@media (max-width: 42rem) {
+  .public-header,
+  .app-header {
+    padding: 16px;
+  }
+  .app-header nav {
+    background: #173e2b;
+  }
+  .walkthrough-body {
+    padding: 16px;
+  }
+  .walkthrough-controls {
+    padding-inline: 16px;
+  }
+  .landing-image {
+    aspect-ratio: 16 / 6;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .demo-cursor {
+    display: none;
   }
 }
