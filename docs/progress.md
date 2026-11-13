@@ -418,3 +418,14 @@
 - `npm run check` passed with 122 frontend tests, all six local SQL suites,
   lint, formatting, TypeScript and the production build. Hosted migration and
   Vercel environment configuration remain deployment steps.
+
+## 2026-11-13 - Athletic interface refinement
+
+- Followed the approved athletic direction for issue #16, retaining green accents
+  while neutralizing surfaces and simplifying typography, controls and spacing.
+- Replaced the three-card feature layout with divided explanations. The homepage
+  pairs photography with a labelled workout example whose reps, saved feedback
+  and next weight appear once; reduced motion shows the completed example.
+- Kept workout persistence, progression and account behavior unchanged.
+- Browser verification remains outstanding because browser access was declined.
+  The implementation was reviewed against source and the existing screenshot.
