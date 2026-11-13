@@ -1,3 +1,4 @@
+import { WorkoutWalkthrough } from './WorkoutWalkthrough.tsx'
 import { Link } from 'react-router-dom'
 
 import { useAuth } from '../auth/auth-context.ts'
@@ -58,28 +59,7 @@ export function LandingPage() {
                 alt="Athlete loading a weight plate onto a barbell in a gym"
               />
             </div>
-            <section
-              className="product-preview"
-              aria-label="LiftIt workout interface preview"
-            >
-              <div className="product-preview-heading">
-                <div>
-                  <span>Example workout</span>
-                  <strong>Upper body</strong>
-                </div>
-                <span>12:48</span>
-              </div>
-              <div className="product-preview-set">
-                <span>Bench press</span>
-                <strong>20 kg</strong>
-                <strong className="preview-reps">11 reps</strong>
-                <span className="preview-check" aria-label="Set saved">
-                  Saved
-                </span>
-              </div>
-              <p className="preview-next">Next set: 22.5 kg</p>
-              <p>6-10 rep target / 2.5 kg increment</p>
-            </section>
+            <WorkoutWalkthrough />
           </div>
         </section>
         <section className="landing-features" aria-labelledby="features-title">

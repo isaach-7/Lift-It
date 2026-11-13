@@ -348,3 +348,12 @@ Feature explanations become divided rows rather than three matching cards. Stick
 controls use opaque surfaces. Existing privacy and consent behavior stays intact.
 
 Design process: unslop by Damir Sokolovsky (https://x.com/heydamir), CC BY 4.0.
+
+## Product walkthrough and header palette
+
+Public and app headers share a forest-green surface with white navigation and a
+consistent wordmark. Green accents use the same family throughout the interface.
+The public preview is a labelled demonstration, not an actual user's recording.
+It shows a cursor entering 20 kg and 11 reps, clicking completion, then saving and
+suggesting 22.5 kg. It runs once, supports pause and replay, and shows its final
+state under reduced motion. The demonstration never writes workout data.
