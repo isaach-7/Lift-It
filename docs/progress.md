@@ -446,3 +446,11 @@
 - Kept the forest-green identity, softened light surfaces and charcoal text,
   and tightened figure/unit spacing without non-ASCII whitespace.
 - Preserved third-party licenses and used WOFF2 with swap/system fallbacks.
+
+## 2026-11-13 - Progression-first presentation
+
+- Standardized all interface typography on Roboto Slab and square corners.
+- Promoted automatic weight progression in the headline and Start training CTA.
+- Removed walkthrough narration and replay UI; looped entry and progression with
+  a readable result hold, compact pause control and static reduced-motion state.
+- Updated interaction tests for looping and reduced motion.

@@ -7,32 +7,31 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-it('pauses, completes and replays the demonstration', () => {
+it('pauses, shows progression, holds the result and loops', () => {
   vi.useFakeTimers()
   render(<WorkoutWalkthrough />)
-  fireEvent.click(screen.getByRole('button', { name: 'Pause demo' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Pause animation' }))
   act(() => vi.advanceTimersByTime(10000))
-  expect(
-    screen.queryByText('Set saved / Next weight: 22.5 kg'),
-  ).not.toBeInTheDocument()
-  fireEvent.click(screen.getByRole('button', { name: 'Play demo' }))
+  expect(screen.queryByText('Next set: 22.5 kg')).not.toBeInTheDocument()
+  fireEvent.click(screen.getByRole('button', { name: 'Play animation' }))
   for (let i = 0; i < 9; i++) act(() => vi.advanceTimersByTime(1000))
-  expect(
-    screen.getByText('Set saved / Next weight: 22.5 kg'),
-  ).toBeInTheDocument()
-  fireEvent.click(screen.getByRole('button', { name: 'Replay demo' }))
-  expect(screen.getByText('Enter the weight you lifted')).toBeInTheDocument()
+  expect(screen.getByText('Next set: 22.5 kg')).toBeInTheDocument()
+  act(() => vi.advanceTimersByTime(3199))
+  expect(screen.getByText('Next set: 22.5 kg')).toBeInTheDocument()
+  act(() => vi.advanceTimersByTime(1))
+  expect(screen.queryByText('Next set: 22.5 kg')).not.toBeInTheDocument()
+  expect(screen.queryByText('Replay demo')).not.toBeInTheDocument()
 })
 
-it('shows the final state without playback under reduced motion', () => {
+it('keeps the final state static under reduced motion', () => {
+  vi.useFakeTimers()
   vi.stubGlobal('matchMedia', () => ({
     matches: true,
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
   }))
   render(<WorkoutWalkthrough />)
-  expect(
-    screen.getByText('Set saved / Next weight: 22.5 kg'),
-  ).toBeInTheDocument()
+  act(() => vi.advanceTimersByTime(30000))
+  expect(screen.getByText('Next set: 22.5 kg')).toBeInTheDocument()
   expect(screen.queryByRole('button')).not.toBeInTheDocument()
 })
