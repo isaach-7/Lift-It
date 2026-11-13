@@ -140,7 +140,7 @@ describe('account foundation', () => {
     renderApp('/')
     expect(
       screen.getByRole('heading', {
-        name: 'Train with intent. Track the work. See the progress.',
+        name: 'Your training. Set by set.',
       }),
     ).toBeInTheDocument()
     expect(

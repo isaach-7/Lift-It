@@ -335,3 +335,16 @@ to static imagery. They do not control or block workout persistence.
 Bodyweight exercises default to reps-only tracking. An explicit added-weight
 setting is copied into the session and equipment comparison key, keeping weighted
 and unweighted records separate even for the same exercise and equipment.
+
+## Athletic interface refinement
+
+The interface uses a practical athletic direction: neutral light and dark surfaces,
+strong but compact typography, aligned training figures and restrained green for
+meaningful actions. Existing workout persistence and progression rules remain intact.
+Public pages show the workout interface prominently alongside training photography.
+A labelled example animates once from an entered set to saved feedback and a next
+weight suggestion. Reduced-motion users see the final example without animation.
+Feature explanations become divided rows rather than three matching cards. Sticky
+controls use opaque surfaces. Existing privacy and consent behavior stays intact.
+
+Design process: unslop by Damir Sokolovsky (https://x.com/heydamir), CC BY 4.0.

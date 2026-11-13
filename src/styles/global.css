@@ -8,11 +8,11 @@
     BlinkMacSystemFont,
     'Segoe UI',
     sans-serif;
-  --canvas: #f5f5f0;
+  --canvas: #f6f6f5;
   --surface: #ffffff;
-  --text: #202823;
-  --muted: #57635b;
-  --border: #d5ddd6;
+  --text: #202122;
+  --muted: #55585b;
+  --border: #d9dbdc;
   --input-border: #8a978e;
   --accent: #23683f;
   --on-accent: #ffffff;
@@ -24,11 +24,11 @@
   color-scheme: light;
 }
 :root[data-theme='dark'] {
-  --canvas: #151a17;
-  --surface: #202622;
+  --canvas: #171819;
+  --surface: #222426;
   --text: #eef3ef;
-  --muted: #adb9af;
-  --border: #3c4940;
+  --muted: #b7babd;
+  --border: #44474a;
   --input-border: #738578;
   --accent: #a8dbb4;
   --on-accent: #17211a;
@@ -37,11 +37,11 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --canvas: #151a17;
-    --surface: #202622;
+    --canvas: #171819;
+    --surface: #222426;
     --text: #eef3ef;
-    --muted: #adb9af;
-    --border: #3c4940;
+    --muted: #b7babd;
+    --border: #44474a;
     --input-border: #738578;
     --accent: #a8dbb4;
     --on-accent: #17211a;
@@ -99,9 +99,9 @@ a {
   margin: 0 0 1rem;
   color: var(--accent);
   font-size: 0.8125rem;
-  font-weight: 750;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 h1 {
@@ -127,7 +127,7 @@ h1 {
   margin: 2rem 0 0;
   color: var(--text);
   font-size: 0.9375rem;
-  font-weight: 650;
+  font-weight: 600;
   gap: 0.75rem;
 }
 
@@ -146,7 +146,7 @@ h1 {
   align-items: center;
   margin-top: 1.25rem;
   color: var(--accent);
-  font-weight: 700;
+  font-weight: 600;
   text-underline-offset: 0.2em;
 }
 
@@ -184,7 +184,7 @@ h1 {
 }
 
 .auth-form label {
-  font-weight: 650;
+  font-weight: 600;
 }
 
 .auth-form input {
@@ -205,7 +205,7 @@ button {
   border-radius: 0.5rem;
   color: var(--canvas);
   background: var(--accent);
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -447,9 +447,9 @@ input:focus-visible {
   margin: 0 0 0.25rem;
   color: var(--accent);
   font-size: 0.6875rem;
-  font-weight: 750;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .picker-heading h4 {
@@ -468,7 +468,7 @@ input:focus-visible {
   gap: 0.5rem;
   margin-top: 1.25rem;
   font-size: 0.875rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .exercise-search input {
@@ -547,9 +547,9 @@ input:focus-visible {
   color: var(--muted);
   background: var(--canvas);
   font-size: 0.75rem;
-  font-weight: 750;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .exercise-image-frame img {
@@ -586,9 +586,9 @@ input:focus-visible {
   margin: 0 0 0.25rem;
   color: var(--accent);
   font-size: 0.6875rem;
-  font-weight: 750;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .exercise-title-row h5 {
@@ -602,11 +602,11 @@ input:focus-visible {
   max-width: 6.5rem;
   padding: 0.3rem 0.45rem;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: 8px;
   color: var(--text);
   background: var(--canvas);
   font-size: 0.625rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.2;
   text-align: center;
 }
@@ -626,7 +626,7 @@ input:focus-visible {
 
 .muscle-tags span {
   padding: 0.3rem 0.5rem;
-  border-radius: 999px;
+  border-radius: 8px;
   color: var(--text);
   background: var(--canvas);
   font-size: 0.6875rem;
@@ -643,7 +643,7 @@ input:focus-visible {
   min-height: 2.5rem;
   padding: 0.55rem 0;
   color: var(--text);
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -784,7 +784,7 @@ input[type='checkbox'] {
   border-color: var(--input-border);
 }
 .brand {
-  font-weight: 800;
+  font-weight: 600;
   font-size: 1.4rem;
   letter-spacing: -0.04em;
   text-decoration: none;
@@ -871,7 +871,7 @@ input[type='checkbox'] {
   border-radius: 0.45rem;
   padding: 0.8rem 1.2rem;
   text-decoration: none;
-  font-weight: 700;
+  font-weight: 600;
 }
 .secondary-link {
   display: flex;
@@ -966,7 +966,7 @@ progress::-webkit-progress-value {
 }
 
 .recent-workout-link span {
-  font-weight: 750;
+  font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
@@ -1027,7 +1027,7 @@ progress::-webkit-progress-value {
 
 .current-best > span {
   color: var(--muted);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .current-best strong {
@@ -1051,7 +1051,7 @@ progress::-webkit-progress-value {
   padding: 1.25rem 0 0.25rem;
   color: var(--text);
   font-size: 1rem;
-  font-weight: 750;
+  font-weight: 600;
   text-align: left;
 }
 table {
@@ -1254,7 +1254,7 @@ fieldset {
 
 /* Workout experience redesign */
 :root {
-  --surface-muted: #eef1ec;
+  --surface-muted: #eeeeed;
   --accent-soft: #dff0e3;
   --shadow: 0 18px 50px rgb(32 40 35 / 8%);
   --radius-small: 0.55rem;
@@ -1263,14 +1263,14 @@ fieldset {
 }
 
 :root[data-theme='dark'] {
-  --surface-muted: #1a211d;
+  --surface-muted: #292b2d;
   --accent-soft: #293b2e;
   --shadow: 0 18px 50px rgb(0 0 0 / 22%);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --surface-muted: #1a211d;
+    --surface-muted: #292b2d;
     --accent-soft: #293b2e;
     --shadow: 0 18px 50px rgb(0 0 0 / 22%);
   }
@@ -1311,7 +1311,7 @@ input[type='number'] {
   min-height: 2.75rem;
   color: var(--text);
   font-size: 1.45rem;
-  font-weight: 850;
+  font-weight: 600;
   letter-spacing: -0.055em;
 }
 
@@ -1323,7 +1323,7 @@ input[type='number'] {
 }
 
 .brand-mark rect {
-  fill: #101713;
+  fill: #191b1d;
 }
 
 .brand-mark path {
@@ -1351,16 +1351,14 @@ input[type='number'] {
   min-height: 100vh;
   overflow: hidden;
   color: #ffffff;
-  background: #101713;
+  background: #191b1d;
 }
 
 .auth-visual::after {
   position: absolute;
   inset: 0;
   content: '';
-  background:
-    linear-gradient(180deg, rgb(11 17 13 / 8%) 35%, rgb(11 17 13 / 76%)),
-    linear-gradient(90deg, rgb(11 17 13 / 45%), transparent 70%);
+  background: rgb(0 0 0 / 40%);
 }
 
 .auth-visual > img {
@@ -1389,7 +1387,7 @@ input[type='number'] {
 .auth-visual-copy strong {
   margin: 0;
   font-size: clamp(2.4rem, 4vw, 4.75rem);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 0.98;
   letter-spacing: -0.055em;
 }
@@ -1448,8 +1446,8 @@ input[type='number'] {
 }
 
 .app-header nav a {
-  border-radius: 999px;
-  font-weight: 650;
+  border-radius: 8px;
+  font-weight: 600;
 }
 
 .app-header nav a.active {
@@ -1523,20 +1521,8 @@ input[type='number'] {
   overflow: hidden;
   padding: clamp(1.25rem, 4vw, 2.25rem);
   color: #ffffff;
-  background: #101713;
+  background: #191b1d;
   box-shadow: var(--shadow);
-}
-
-.workout-focus::after {
-  position: absolute;
-  top: -5rem;
-  right: -5rem;
-  width: 13rem;
-  height: 13rem;
-  border: 2rem solid rgb(185 246 119 / 8%);
-  border-radius: 50%;
-  content: '';
-  pointer-events: none;
 }
 
 .workout-focus > * {
@@ -1569,7 +1555,7 @@ input[type='number'] {
 
 .weekly-score span {
   color: #c8d0ca;
-  font-weight: 650;
+  font-weight: 600;
 }
 
 .workout-focus progress::-webkit-progress-bar {
@@ -1586,12 +1572,12 @@ input[type='number'] {
 
 .workout-focus .day.done strong {
   border-color: #b9f677;
-  color: #101713;
+  color: #191b1d;
   background: #b9f677;
 }
 
 .workout-focus .primary-workout {
-  color: #101713;
+  color: #191b1d;
   background: #b9f677;
 }
 
@@ -1601,7 +1587,7 @@ input[type='number'] {
   flex: 0 0 auto;
   padding: 0.2rem;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--surface-muted);
 }
 
@@ -1610,7 +1596,7 @@ input[type='number'] {
   min-height: 2.35rem;
   padding: 0.35rem 0.7rem;
   border: 0;
-  border-radius: 999px;
+  border-radius: 8px;
   color: var(--muted);
   background: transparent;
   font-size: 0.875rem;
@@ -1683,7 +1669,6 @@ input[type='number'] {
   border: 0;
   background: color-mix(in srgb, var(--canvas), transparent 5%);
   box-shadow: 0 0.7rem 1.4rem rgb(32 40 35 / 8%);
-  backdrop-filter: blur(12px);
 }
 
 .workout-exercise,
@@ -1713,7 +1698,7 @@ input[type='number'] {
 .exercise-log-heading > span {
   max-width: 12rem;
   padding: 0.35rem 0.6rem;
-  border-radius: 999px;
+  border-radius: 8px;
   color: var(--muted);
   background: var(--surface-muted);
   font-size: 0.75rem;
@@ -1724,9 +1709,9 @@ input[type='number'] {
   margin: 0 0 0.3rem;
   color: var(--accent);
   font-size: 0.75rem;
-  font-weight: 750;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .exercise-prescription {
@@ -1756,9 +1741,9 @@ input[type='number'] {
   padding: 0 0.35rem;
   color: var(--muted);
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 600;
   text-align: center;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .live-set {
@@ -1789,9 +1774,9 @@ input[type='number'] {
 
 .set-number small {
   font-size: 0.625rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .planned-value {
@@ -1812,7 +1797,7 @@ input[type='number'] {
   color: var(--text);
   background: var(--surface);
   font-size: 1.05rem;
-  font-weight: 750;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   text-align: center;
 }
@@ -1899,7 +1884,7 @@ input[type='number'] {
   min-height: 2.25rem;
   padding: 0.35rem 0.65rem;
   border-color: var(--border);
-  border-radius: 999px;
+  border-radius: 8px;
   color: var(--muted);
   background: transparent;
   font-size: 0.75rem;
@@ -1930,7 +1915,6 @@ input[type='number'] {
   padding: 0.75rem clamp(1rem, 3vw, 1.75rem) 0.25rem;
   border-bottom: 1px solid var(--border);
   background: color-mix(in srgb, var(--surface), transparent 3%);
-  backdrop-filter: blur(12px);
 }
 
 .exercise-library-controls .muscle-filters {
@@ -1951,7 +1935,6 @@ input[type='number'] {
   padding: 0.8rem 1rem calc(0.8rem + env(safe-area-inset-bottom));
   border-top: 1px solid var(--border);
   background: color-mix(in srgb, var(--canvas), transparent 4%);
-  backdrop-filter: blur(12px);
 }
 
 .save-bar > button:first-child {
@@ -1970,7 +1953,6 @@ input[type='number'] {
 
 .confirmation-dialog::backdrop {
   background: rgb(10 16 12 / 62%);
-  backdrop-filter: blur(4px);
 }
 
 .confirmation-dialog h2 {
@@ -2224,7 +2206,7 @@ input[type='number'] {
   display: inline-flex;
   align-items: center;
   color: var(--text);
-  font-weight: 700;
+  font-weight: 600;
   text-underline-offset: 0.2em;
 }
 
@@ -2299,7 +2281,7 @@ input[type='number'] {
   border: 1px solid #39433d;
   border-radius: var(--radius);
   color: #ffffff;
-  background: #101713;
+  background: #191b1d;
   box-shadow: 0 1.25rem 3rem rgb(0 0 0 / 28%);
 }
 
@@ -2335,17 +2317,17 @@ input[type='number'] {
 
 .preview-check {
   padding: 0.35rem 0.5rem;
-  border-radius: 999px;
-  color: #101713;
+  border-radius: 8px;
+  color: #191b1d;
   background: #b9f677;
   font-size: 0.7rem;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .product-preview p {
   margin: 0.75rem 0 0;
   color: #b9f677;
-  font-weight: 750;
+  font-weight: 600;
 }
 
 .landing-features {
@@ -2380,8 +2362,8 @@ input[type='number'] {
 .feature-grid article > span {
   color: var(--accent);
   font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
 .feature-grid h3 {
@@ -2434,7 +2416,7 @@ input[type='number'] {
 
 .privacy-page section a {
   color: var(--accent);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .compact-public-footer {
@@ -2460,7 +2442,7 @@ input[type='number'] {
 
 .consent-label a {
   color: var(--accent);
-  font-weight: 750;
+  font-weight: 600;
 }
 
 .register-privacy {
@@ -2473,7 +2455,7 @@ input[type='number'] {
 
 .register-privacy a {
   color: var(--accent);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 @media (min-width: 50rem) {
@@ -2529,5 +2511,240 @@ input[type='number'] {
   .product-preview-set {
     display: grid;
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Training log: consistent spacing, quiet surfaces and readable figures. */
+:root {
+  --radius-small: 8px;
+  --radius: 12px;
+  --radius-large: 16px;
+  --shadow: none;
+}
+h1,
+h2,
+h3 {
+  font-weight: 600;
+  line-height: 1.15;
+}
+button,
+input,
+select,
+.button-link {
+  border-radius: 8px;
+}
+button,
+.button-link {
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+.brand {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  gap: 12px;
+}
+.eyebrow {
+  letter-spacing: 0;
+  color: var(--muted);
+  font-weight: 500;
+}
+.app-content {
+  padding-top: 32px;
+}
+.dashboard-heading h1,
+.session-header h1,
+.auth-card h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.1;
+  max-width: 24ch;
+}
+.panel {
+  box-shadow: none;
+  border: 1px solid var(--border);
+}
+.dashboard-grid {
+  gap: 24px;
+}
+.rest-timer,
+.save-bar,
+.editor-save-bar {
+  background: var(--canvas);
+  box-shadow: none;
+}
+.live-set-heading,
+.live-set .set-row {
+  gap: 8px;
+}
+.live-set .set-row {
+  padding: 8px;
+}
+.live-set input:not([type='checkbox']) {
+  font-weight: 500;
+}
+.set-feedback {
+  min-height: 28px;
+  padding: 4px 8px;
+}
+.exercise-position {
+  letter-spacing: 0;
+  margin-bottom: 4px;
+}
+.override-control,
+.set-type-toggle {
+  gap: 4px;
+  margin-top: 8px;
+}
+.auth-visual-copy p,
+.auth-visual-copy strong {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.1;
+}
+.landing-hero {
+  gap: 48px;
+  padding: 64px 0;
+  min-height: 640px;
+}
+.landing-copy h1 {
+  font-size: clamp(2.75rem, 5.5vw, 5rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  max-width: 12ch;
+}
+.landing-visual {
+  display: grid;
+  gap: 16px;
+  padding: 0;
+  min-width: 0;
+}
+.landing-image {
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  border-radius: 12px;
+}
+.product-preview {
+  position: static;
+  width: 100%;
+  margin: 0;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: none;
+  font-variant-numeric: tabular-nums;
+}
+.product-preview-heading strong {
+  font-size: 24px;
+}
+.product-preview-heading span,
+.product-preview p {
+  font-size: 14px;
+}
+.product-preview-set {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr auto;
+  gap: 8px;
+  padding: 16px 8px;
+  margin-top: 24px;
+  font-size: 14px;
+  background: #292c2e;
+}
+.preview-check {
+  font-size: 12px;
+  border-radius: 4px;
+  padding: 4px 8px;
+  animation: example-save 4s ease both;
+}
+.preview-reps {
+  animation: example-reps 4s ease both;
+}
+.preview-next {
+  animation: example-save 4s ease both;
+}
+@keyframes example-reps {
+  0%,
+  15% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  35%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes example-save {
+  0%,
+  55% {
+    opacity: 0;
+  }
+  75%,
+  100% {
+    opacity: 1;
+  }
+}
+.landing-features {
+  padding: 64px 0;
+}
+.landing-features h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+.feature-grid {
+  display: block;
+  margin-top: 32px;
+}
+.feature-grid article {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 16px;
+  min-height: 0;
+  padding: 24px 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+}
+.feature-grid article > span {
+  font-size: 14px;
+  letter-spacing: 0;
+}
+.feature-grid h3 {
+  margin: 0;
+  font-size: 20px;
+}
+.feature-grid p {
+  grid-column: 2;
+  margin: 0;
+  max-width: 56ch;
+}
+@media (min-width: 50rem) {
+  .landing-hero {
+    grid-template-columns: 1fr 1.1fr;
+  }
+  .feature-grid article {
+    grid-template-columns: 48px 1fr 1.5fr;
+  }
+  .feature-grid p {
+    grid-column: 3;
+  }
+}
+@media (max-width: 42rem) {
+  .landing-hero {
+    gap: 32px;
+    padding: 40px 0;
+  }
+  .product-preview {
+    padding: 16px;
+  }
+  .product-preview-set {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .product-preview-set > span:first-child {
+    grid-column: 1 / -1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .preview-check,
+  .preview-reps,
+  .preview-next {
+    animation: none;
   }
 }
