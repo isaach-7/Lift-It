@@ -264,7 +264,7 @@ export function HomePage() {
               {series.length === 1 ? (
                 <div className="current-best">
                   <span>Current best</span>
-                  <strong>
+                  <strong className="measurement">
                     {series[0]!.value} {series[0]!.metric}
                   </strong>
                   <p>
@@ -292,7 +292,7 @@ export function HomePage() {
                             {formatDate(p.completed_at)}
                           </time>
                         </td>
-                        <td>
+                        <td className="measurement">
                           {p.value} {p.metric}
                         </td>
                       </tr>

@@ -357,3 +357,15 @@ The public preview is a labelled demonstration, not an actual user's recording.
 It shows a cursor entering 20 kg and 11 reps, clicking completion, then saving and
 suggesting 22.5 kg. It runs once, supports pause and replay, and shows its final
 state under reduced motion. The demonstration never writes workout data.
+
+## Geometric and slab typography
+
+Barlow (400, 500 and 600) supplies the interface, labels and training figures.
+Roboto Slab (500 and 600) supplies primary page headings and public section
+headings. This gives LiftIt a more distinctive athletic character while keeping
+dense workout rows in sans serif. These are open-source alternatives rather than
+copies of Nudista and Kulturista. Latin WOFF2 files are self-hosted, with their
+original licenses, so no font service is required during a workout. Font display
+uses swap and system fallbacks. Light text is charcoal on off-white; dark theme
+contrast remains intact. Weight/unit pairs use compact CSS spacing without
+invisible Unicode. Case-sensitive forms are requested where supported by a font.
