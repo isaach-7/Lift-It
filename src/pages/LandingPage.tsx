@@ -31,8 +31,7 @@ export function LandingPage() {
       <main>
         <section className="landing-hero">
           <div className="landing-copy">
-            <p className="eyebrow">Simple workout tracking</p>
-            <h1>Train with intent. Track the work. See the progress.</h1>
+            <h1>Your training. Set by set.</h1>
             <p className="intro">
               Build routines, log each set while you train, and follow clear
               weight suggestions based on the rep range you choose.
@@ -65,7 +64,7 @@ export function LandingPage() {
             >
               <div className="product-preview-heading">
                 <div>
-                  <span>Live workout</span>
+                  <span>Example workout</span>
                   <strong>Upper body</strong>
                 </div>
                 <span>12:48</span>
@@ -73,19 +72,19 @@ export function LandingPage() {
               <div className="product-preview-set">
                 <span>Bench press</span>
                 <strong>20 kg</strong>
-                <strong>11 reps</strong>
+                <strong className="preview-reps">11 reps</strong>
                 <span className="preview-check" aria-label="Set saved">
                   Saved
                 </span>
               </div>
-              <p>Next weight: 22.5 kg</p>
+              <p className="preview-next">Next set: 22.5 kg</p>
+              <p>6-10 rep target / 2.5 kg increment</p>
             </section>
           </div>
         </section>
         <section className="landing-features" aria-labelledby="features-title">
           <div className="section-heading">
-            <p className="eyebrow">What LiftIt does</p>
-            <h2 id="features-title">The workout, without the noise.</h2>
+            <h2 id="features-title">Build. Log. Repeat.</h2>
           </div>
           <div className="feature-grid">
             <article>
@@ -118,7 +117,7 @@ export function LandingPage() {
       </main>
       <footer className="public-footer">
         <Brand />
-        <p>A focused workout tracker for a UK-first public beta.</p>
+        <p>Workout tracking, built for the gym.</p>
         <nav aria-label="Legal and support">
           <Link to="/privacy">Privacy</Link>
           <a href="mailto:support@lift-it.site">support@lift-it.site</a>

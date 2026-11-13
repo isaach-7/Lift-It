@@ -36,10 +36,10 @@ export function LoginPage() {
   if (signedIn && mode === 'login') return <Navigate to="/app" replace />
   if (updated) return <Navigate to="/app" replace />
   const title = {
-    login: 'Welcome back.',
-    register: 'Create your account.',
-    forgot: 'Reset your password.',
-    update: 'Choose a new password.',
+    login: 'Sign in',
+    register: 'Create your account',
+    forgot: 'Reset your password',
+    update: 'Choose a new password',
   }[mode]
 
   async function submit(event: FormEvent<HTMLFormElement>) {

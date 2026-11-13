@@ -132,8 +132,7 @@ export function HomePage() {
   return (
     <>
       <header className="dashboard-heading">
-        <p className="eyebrow">Your training</p>
-        <h1>Ready to put the work in, {name}?</h1>
+        <h1>Your training</h1>
       </header>
       <div className="dashboard-grid">
         <section className="panel workout-focus">
